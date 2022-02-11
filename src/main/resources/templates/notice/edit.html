@@ -1,0 +1,57 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">通知标题：</label>
+				<div class="layui-input-inline">
+					<input name="title" th:value="${info['title']}" lay-verify="required" autocomplete="off" placeholder="请输入通知标题" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">通知来源：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="source|1|通知来源|name|id" th:data="${NOTICE_SOURCE_LIST}" th:value="${info['source']}?:1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否置顶：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isTop" data="已置顶|未置顶" th:value="${info['isTop']} ?: 2"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">阅读量：</label>
+				<div class="layui-input-inline">
+					<input name="viewNum" th:value="${info['viewNum']}" lay-verify="required|number" autocomplete="off" placeholder="请输入阅读量" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">发布状态：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="status|1|发布状态|name|id" th:data="${NOTICE_STATUS_LIST}" th:value="${info['status']}?:3"/>
+				</div>
+			</div>
+			<div class="layui-inline layui-hide publishTime">
+				<label class="layui-form-label">发布时间：</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="publishTime|发布时间|datetime" th:value="${info['publishTime']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">通知内容：</label>
+			<div class="layui-input-block">
+				<textarea name="content" placeholder="请输入通知内容" class="layui-textarea" th:text="${info['content']}"></textarea>
+				<widget:kindEditor name="content" type="default" dirname="notice" width="100%" height="350"/>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

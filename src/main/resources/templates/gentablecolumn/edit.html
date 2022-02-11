@@ -1,0 +1,128 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">归属表编号：</label>
+				<div class="layui-input-inline">
+					<input name="tableId" th:value="${info['tableId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入归属表编号" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">列名称：</label>
+				<div class="layui-input-inline">
+					<input name="columnName" th:value="${info['columnName']}" lay-verify="required" autocomplete="off" placeholder="请输入列名称" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">列描述：</label>
+				<div class="layui-input-inline">
+					<input name="columnComment" th:value="${info['columnComment']}" lay-verify="required" autocomplete="off" placeholder="请输入列描述" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">列类型：</label>
+				<div class="layui-input-inline">
+					<input name="columnType" th:value="${info['columnType']}" lay-verify="required" autocomplete="off" placeholder="请输入列类型" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">JAVA类型：</label>
+				<div class="layui-input-inline">
+					<input name="javaType" th:value="${info['javaType']}" lay-verify="required" autocomplete="off" placeholder="请输入JAVA类型" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">JAVA字段名：</label>
+				<div class="layui-input-inline">
+					<input name="javaField" th:value="${info['javaField']}" lay-verify="required" autocomplete="off" placeholder="请输入JAVA字段名" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否主键：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isPk" data="是|否" th:value="${info['isPk']} ?: 2"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否自增：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isIncrement" data="是|否" th:value="${info['isIncrement']} ?: 2"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否必填：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isRequired" data="是|否" th:value="${info['isRequired']} ?: 2"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否为插入字段：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isInsert" data="是|否" th:value="${info['isInsert']} ?: 1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否编辑字段：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isEdit" data="是|否" th:value="${info['isEdit']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否列表字段：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isList" data="是|否" th:value="${info['isList']} ?: 1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否查询字段：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isQuery" data="是|否" th:value="${info['isQuery']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">查询方式（等于、不等于、大于、小于、范围）：</label>
+				<div class="layui-input-inline">
+					<input name="queryType" th:value="${info['queryType']}" lay-verify="required" autocomplete="off" placeholder="请输入查询方式（等于、不等于、大于、小于、范围）" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）：</label>
+				<div class="layui-input-inline">
+					<input name="htmlType" th:value="${info['htmlType']}" lay-verify="required" autocomplete="off" placeholder="请输入显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">字典类型：</label>
+				<div class="layui-input-inline">
+					<input name="dictType" th:value="${info['dictType']}" lay-verify="required" autocomplete="off" placeholder="请输入字典类型" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">排序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

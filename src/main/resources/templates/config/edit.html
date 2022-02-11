@@ -1,0 +1,68 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">配置标题：</label>
+				<div class="layui-input-inline">
+					<input name="title" th:value="${info['title']}" lay-verify="required" autocomplete="off" placeholder="请输入配置标题" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">配置标签：</label>
+				<div class="layui-input-inline">
+					<input name="tag" th:value="${info['tag']}" lay-verify="required" autocomplete="off" placeholder="请输入配置标签符" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">配置分组：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="groupId|1|配置分组|name|id" sql="SELECT id,`name` FROM sys_config_group WHERE mark=1 ORDER BY sort ASC;" th:value="${info['groupId']}?:0"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">配置类型：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="type|1|配置类型|name|id" th:data="${CONFIG_TYPE_LIST}" th:value="${info['type']}?:text"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="正常|停用" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">排序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text" style="width:625px;">
+			<label class="layui-form-label">配置值：</label>
+			<div class="layui-input-block">
+				<textarea name="value" placeholder="请输入配置值" class="layui-textarea" th:text="${info['value']}"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text" style="width:625px;">
+			<label class="layui-form-label">配置项：</label>
+			<div class="layui-input-block">
+				<textarea name="options" placeholder="请输入配置项" class="layui-textarea" th:text="${info['options']}"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item layui-form-text" style="width:625px;">
+			<label class="layui-form-label">配置说明：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入配置说明" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

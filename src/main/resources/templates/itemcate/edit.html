@@ -1,0 +1,69 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<input name="pid" id="pid" type="hidden" th:value="${info['pid']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">栏目名称：</label>
+				<div class="layui-input-inline">
+					<input name="name" th:value="${info['name']}" lay-verify="required" autocomplete="off" placeholder="请输入栏目名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">所属站点：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="itemId|1|所属站点|name|id" sql="SELECT id,`name` FROM sys_item WHERE `status`=1 AND mark=1 ORDER BY sort ASC;" th:value="${info['itemId']}?:0"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">拼音(全)：</label>
+				<div class="layui-input-inline">
+					<input name="pinyin" th:value="${info['pinyin']}" lay-verify="required" autocomplete="off" placeholder="请输入拼音(全)" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">拼音(简)：</label>
+				<div class="layui-input-inline">
+					<input name="code" th:value="${info['code']}" lay-verify="required" autocomplete="off" placeholder="请输入拼音(简)" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="启用|停用" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">有无封面：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isCover" data="有|无" th:value="${info['isCover']} ?: 2" hidden="cover"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item cover">
+			<label class="layui-form-label">封面：</label>
+			<widget:uploadSingleImage name="cover|封面|90x90|itemcate|建议上传尺寸450x450|450x450" th:value="${info['cover']}"/>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">排序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

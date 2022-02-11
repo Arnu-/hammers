@@ -1,0 +1,78 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">表名称：</label>
+				<div class="layui-input-inline">
+					<input name="tableName" th:value="${info['tableName']}" lay-verify="required" autocomplete="off" placeholder="请输入表名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">表描述：</label>
+				<div class="layui-input-inline">
+					<input name="tableComment" th:value="${info['tableComment']}" lay-verify="required" autocomplete="off" placeholder="请输入表描述" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">表前缀：</label>
+				<div class="layui-input-inline">
+					<input name="tablePrefix" th:value="${info['tablePrefix']}" lay-verify="required" autocomplete="off" placeholder="请输入表前缀" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">实体类名：</label>
+				<div class="layui-input-inline">
+					<input name="className" th:value="${info['className']}" lay-verify="required" autocomplete="off" placeholder="请输入实体类名" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">包路径：</label>
+				<div class="layui-input-inline">
+					<input name="packageName" th:value="${info['packageName']}" lay-verify="required" autocomplete="off" placeholder="请输入包路径" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">模块名：</label>
+				<div class="layui-input-inline">
+					<input name="moduleName" th:value="${info['moduleName']}" lay-verify="required" autocomplete="off" placeholder="请输入模块名" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">业务名：</label>
+				<div class="layui-input-inline">
+					<input name="businessName" th:value="${info['businessName']}" lay-verify="required" autocomplete="off" placeholder="请输入业务名" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">功能名：</label>
+				<div class="layui-input-inline">
+					<input name="functionName" th:value="${info['functionName']}" lay-verify="required" autocomplete="off" placeholder="请输入功能名" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">作者：</label>
+				<div class="layui-input-inline">
+					<input name="functionAuthor" th:value="${info['functionAuthor']}" lay-verify="required" autocomplete="off" placeholder="请输入作者" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

@@ -1,0 +1,91 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<input name="pid" id="pid" type="hidden" th:value="${info['pid']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">菜单名称：</label>
+				<div class="layui-input-inline">
+					<input name="name" th:value="${info['name']}" lay-verify="required" autocomplete="off" placeholder="请输入菜单名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">图标：</label>
+				<div class="layui-input-inline">
+					<widget:iconPicker name="icon" th:value="${info['icon']}?:'layui-icon-home'"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">URL地址：</label>
+				<div class="layui-input-inline">
+					<input name="url" th:value="${info['url']}" lay-verify="required" autocomplete="off" placeholder="请输入URL地址" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">参数：</label>
+				<div class="layui-input-inline">
+					<input name="param" th:value="${info['param']}" lay-verify="" autocomplete="off" placeholder="请输入参数" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">类型：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="type|1|类型|name|id" th:data="${MENU_TYPE_LIST}" th:value="${info['type']}?:1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">上级菜单：</label>
+				<div class="layui-input-inline">
+					<widget:treeSelect name="pid|0|上级菜单|name|id" sql="SELECT id,`name`,pid FROM sys_menu WHERE `status`=1  AND type <=3 AND mark=1 ORDER BY pid ASC,id ASC;" th:value="${info['pid']}?:0"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">权限标识：</label>
+				<div class="layui-input-inline">
+					<input name="permission" th:value="${info['permission']}" lay-verify="" autocomplete="off" placeholder="请输入权限标识" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">显示顺序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入显示顺序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否显示：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="显示|不显示" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否公共：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isPublic" data="是|否" th:value="${info['isPublic']} ?: 2"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item funcIds">
+			<label class="layui-form-label">权限节点：</label>
+			<div class="layui-input-block">
+				<widget:transfer param="funcIds|0|全部节点,已赋予节点|name|id|220x350" data="1=列表,5=添加,10=修改,15=删除,20=状态,25=批量删除,30=全部展开,35=全部折叠,40=添加子级,45=导出数据,50=导入数据" th:value="${info['funcIds']}"/>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">菜单备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入菜单备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭" lay-filter="submitForm2"/>
+	</form>
+</div>
+</html>

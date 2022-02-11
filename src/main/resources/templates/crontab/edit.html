@@ -1,0 +1,56 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">任务标题：</label>
+				<div class="layui-input-inline">
+					<input name="title" th:value="${info['title']}" lay-verify="required" autocomplete="off" placeholder="请输入任务标题" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">crontab格式：</label>
+				<div class="layui-input-inline">
+					<input name="cron" th:value="${info['cron']}" lay-verify="required" autocomplete="off" placeholder="请输入crontab格式" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">延迟秒数：</label>
+				<div class="layui-input-inline">
+					<input name="delay" th:value="${info['delay']}" lay-verify="required|number" autocomplete="off" placeholder="请输入延迟秒数(单位 毫秒)" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">间隔秒数：</label>
+				<div class="layui-input-inline">
+					<input name="fixed" th:value="${info['fixed']}" lay-verify="required|number" autocomplete="off" placeholder="请输入间隔秒数(单位 毫秒)" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">已执行次数：</label>
+				<div class="layui-input-inline">
+					<input name="execute" th:value="${info['execute']}" lay-verify="required|number" autocomplete="off" placeholder="请输入已执行次数" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="正常|暂停" th:value="${info['status']} ?: 2"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

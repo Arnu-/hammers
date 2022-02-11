@@ -1,0 +1,34 @@
+<html layout:decorator="public/layout" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+
+    <!-- 表格工具栏 -->
+    <form class="layui-form toolbar">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" name="tableName" placeholder="请输入数据表称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: auto;">
+                    <widget:btnQuery name="查询"/>
+                    <widget:btnFunc shiro:hasPermission="sys:gentable:importTable" name="导入数据表|importTable|layui-icon-share|layui-bg-blue|1"/>
+                    <widget:btnFunc shiro:hasPermission="sys:gentable:generator" name="生成代码|generator|layui-icon-templeate-1|layui-btn-warm|1"/>
+                    <widget:btnDAll shiro:hasPermission="sys:gentable:dall" name="批量删除"/>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- 数据表格 -->
+    <table class="layui-hide" id="tableList" lay-filter="tableList"></table>
+
+    <!-- 表格操作列 -->
+    <script type="text/html" id="toolBar">
+        <widget:btnEdit shiro:hasPermission="sys:gentable:update" name="编辑"/>
+        <widget:btnDel shiro:hasPermission="sys:gentable:delete" name="删除"/>
+        <widget:btnFunc shiro:hasPermission="sys:gentable:generator" name="生成代码|generator|layui-icon-templeate-1|layui-btn-warm|2"/>
+    </script>
+
+</div>
+</html>

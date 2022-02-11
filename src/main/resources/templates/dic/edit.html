@@ -1,0 +1,56 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">字典标题：</label>
+				<div class="layui-input-inline">
+					<input name="title" th:value="${info['title']}" lay-verify="required" autocomplete="off" placeholder="请输入字典名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">内部标签：</label>
+				<div class="layui-input-inline">
+					<input name="tag" th:value="${info['tag']}" lay-verify="required" autocomplete="off" placeholder="请输入内部标签" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">字典类型：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="typeId|1|字典分类|name|id" sql="SELECT * FROM sys_dic_type WHERE mark=1 ORDER BY sort ASC;" th:value="${info['typeId']}?:0"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="在用|停用" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">字典值：</label>
+			<div class="layui-input-block">
+				<textarea name="value" lay-verify="required" placeholder="请输入字典值,例如(性别：1:男 2:女 3:未知)" class="layui-textarea" th:text="${info['value']}"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">显示顺序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入显示顺序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

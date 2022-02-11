@@ -1,0 +1,60 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<label class="layui-form-label">站点图片：</label>
+			<widget:uploadSingleImage name="image|图片|90x90|item|建议上传尺寸450x450|450x450" th:value="${info['image']}"/>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">站点名称：</label>
+				<div class="layui-input-inline">
+					<input name="name" th:value="${info['name']}" lay-verify="required" autocomplete="off" placeholder="请输入站点名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">站点类型：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="type|1|站点类型|name|id" th:data="${ITEM_TYPE_LIST}" th:value="${info['type']}?:1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">站点地址：</label>
+				<div class="layui-input-inline">
+					<input name="url" th:value="${info['url']}" lay-verify="required" autocomplete="off" placeholder="请输入站点地址" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">二级域名：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="isDomain" data="是|否" th:value="${info['isDomain']} ?: 1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">状态：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="在用|停用" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">显示顺序：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入显示顺序" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width: 625px;">
+			<label class="layui-form-label">站点备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入站点备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

@@ -1,0 +1,78 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户头像：</label>
+			<widget:uploadSingleImage name="avatar|头像|90x90|user|建议上传尺寸450x450|450x450" th:value="${info['avatar']}"/>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">真实姓名：</label>
+				<div class="layui-input-inline">
+					<input name="realname" th:value="${info['realname']}" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">用户昵称：</label>
+				<div class="layui-input-inline">
+					<input name="nickname" th:value="${info['nickname']}" lay-verify="required" autocomplete="off" placeholder="请输入用户昵称" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">性别：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="gender|1|性别|name|id" th:data="${MEMBER_GENDER_LIST}" th:value="${info['gender']}?:1"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">手机号码：</label>
+				<div class="layui-input-inline">
+					<input name="mobile" th:value="${info['mobile']}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">出生日期：</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="birthday|出生日期|date" th:value="${info['birthday']}"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">登录密码：</label>
+				<div class="layui-input-inline">
+					<input name="password" autocomplete="off" placeholder="请输入登录密码" class="layui-input" type="password">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">所属城市：</label>
+			<widget:citySingleSelect th:value="${info['districtId']} ?: 0" limit="3"/>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">是否启用：</label>
+				<div class="layui-input-inline">
+					<widget:switchCheck name="status" data="启用|停用" th:value="${info['status']} ?: 1"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width:625px;">
+			<label class="layui-form-label">个人简介：</label>
+			<div class="layui-input-block">
+				<textarea name="intro" placeholder="请输入个人简介" class="layui-textarea" th:text="${info['intro']}"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item" style="width:625px;">
+			<label class="layui-form-label">个性签名：</label>
+			<div class="layui-input-block">
+				<textarea name="signature" placeholder="请输入个性签名" class="layui-textarea" th:text="${info['signature']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

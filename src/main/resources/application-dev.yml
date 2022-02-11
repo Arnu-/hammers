@@ -1,0 +1,267 @@
+# 端口配置
+server:
+  port: 9010
+#  servlet:
+#    # 项目的前缀名
+#    context-path: /hammers
+  IMAGE_URL: http://localhost:9010
+
+spring:
+  h2:
+    console:
+      #可以访问h2数据库
+      enabled: true
+      #代表访问的地址   localhost:8080/h2-console  访问h2数据库
+      path: /h2-console
+      settings:
+        #防止跟踪输出
+        trace: false
+        #防止其他ip访问
+        web-allow-others: false
+
+  # 配置数据源
+  datasource:
+    # 使用阿里的Druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 填写你数据库的url、登录名、密码和数据库名
+    #driver-class-name: org.h2.Driver
+    #url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+    #url: jdbc:h2:E:/tmp/h2db
+    #username: sa
+    #password: 123456
+
+    url: jdbc:mysql://127.0.0.1:3306/hammers_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8&useSSL=true&tinyInt1isBit=false
+    username: hammers_dba
+    password: hammers_dba_123
+    druid:
+      # 连接池的配置信息
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 5
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,log4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      # 配置DruidStatFilter
+      webStatFilter:
+        enabled: true
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      # 配置DruidStatViewServlet
+      statViewServlet:
+        url-pattern: "/druid/*"
+        # IP白名单(没有配置或者为空，则允许所有访问)
+        allow: 127.0.0.1,192.168.174.1
+        # IP黑名单 (存在共同时，deny优先于allow)
+        deny: 192.168.1.73
+        #  禁用HTML页面上的“Reset All”功能
+        reset-enable: false
+        # 登录名
+        login-username: admin
+        # 登录密码
+        login-password: 123456
+
+  # 自定义国际化配置
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+    encoding: UTF-8
+
+  # Redis数据源
+  redis:
+    # 缓存库默认索引0
+    database: 0
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password: etl@202001
+    # 连接超时时间（毫秒）
+    timeout: 6000
+    # 默认的数据过期时间，主要用于shiro权限管理
+    expire: 2592000
+    jedis:
+      pool:
+        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 10      # 连接池中的最大空闲连接
+        min-idle: 1       # 连接池中的最小空闲连接
+
+  servlet:
+    multipart:
+      # 过滤springmvc的文件上传
+      enabled: false
+      # 单个文件最大值
+      max-file-size: 50MB
+      # 上传文件总的最大值
+      max-request-size: 100MB
+
+  #邮件配置
+  mail:
+    # 设置邮箱主机
+    host: smtp.qq.com
+    # 开启邮箱POP3/SMTP服务，获取客户端授权码(注意并不是邮箱密码，而是授权码)
+    password:
+    # 邮箱的用户名
+    username:
+    properties:
+      mail:
+        smtp:
+          # 设置是否需要认证，如果为true,那么用户名和密码就必须的。如果设置false，可以不设置用户名和密码，当然也得看你的对接的平台是否支持无密码进行访问的。
+          auth: true
+          starttls:
+            # STARTTLS[1]  是对纯文本通信协议的扩展。它提供一种方式将纯文本连接升级为加密连接（TLS或SSL），而不是另外使用一个端口作加密通信。
+            enable: true
+            require: true
+
+  alisms:
+    accessKeyId:
+    accessKeySecret:
+    regionId: cn-hangzhou
+    signName: 大学圈
+    templateCode:
+
+  thymeleaf:
+    # 默认true,开发是设置false,上线是设置为true以便提高性能
+    # 开发时关闭缓存,不然没法看到实时页面
+    cache: false
+    enabled: true  #开启thymeleaf视图解析
+    encoding: UTF-8
+    #模板的模式，支持 HTML, XML TEXT JAVASCRIPT
+    #严格的HTML语法模式
+    mode: HTML
+    # 指定模板所在的目录
+    prefix: classpath:/templates/
+    #后缀名
+    suffix: .html
+#    # 检查模板路径是否存在
+#    check-template-location: true
+    servlet:
+      content-type: text/html
+  #    enabled: true
+  #    check-template: false
+
+  jms:
+    # 默认情况下activemq提供的是queue模式，若要使用topic模式需要配置下面配置
+    pub-sub-domain: false
+
+  # activemq消息队列
+  activemq:
+    #队列地址
+    broker-url: tcp://47.99.90.120:61616
+    #是否是内存模式(内置MQ，true是 false否)
+    in-memory: false
+    # 等待消息发送响应的时间。设置为0等待永远
+    send-timeout: 0
+    #账户
+    user: 'admin'
+    #密码
+    password: '123456'
+
+  # 配置rabbitMq 服务器
+  rabbitmq:
+    host: 47.99.90.120
+    port: 5672
+    username: guest
+    password: guest
+    #虚拟host 可以不设置,使用server默认host
+    virtual-host: /
+    #消息确认配置项
+    #确认消息已发送到交换机(Exchange)
+    publisher-confirms: true
+    #确认消息已发送到队列(Queue)
+    publisher-returns: true
+    listener:
+      simple:
+        #acknowledge-mode: manual #设置确认模式手工确认
+        concurrency: 1 #消费者最小数量
+        max-concurrency: 10 # 消费者最大数量
+        prefetch: 5 # 单次可拉取消息数量
+    cache:
+      connection:
+        # 缓存连接模式,默认一个连接,多个channel
+        mode: channel
+#         多个连接,多个channel
+#        mode: connection
+
+file:
+  #上传的服务器上的映射文件夹
+  accessPath: /uploads/
+  #静态资源对外暴露的访问路径
+  staticAccessPath: /**
+  #静态资源实际存储路径
+  uploadFolder: /root/code/uploads/
+
+# Shiro
+shiro:
+  cipher-key: f/SX5TIve5WWzT4aQlABJA==
+  cookie-name: shiro-cookie
+  user:
+    # 登录地址
+    loginUrl: /login
+    # 权限认证失败地址
+    unauthorizedUrl: /unauth
+    # 首页地址
+    indexUrl: /index
+    # 验证码开关
+    captchaEnabled: true
+    # 验证码类型 math 数组计算 char 字符
+    captchaType: math
+    cookie:
+      # 设置Cookie的域名 默认空，即当前访问的域名
+      domain:
+      # 设置cookie的有效访问路径
+      path: /
+      # 设置HttpOnly属性
+      httpOnly: true
+      # 设置Cookie的过期时间，天为单位
+      maxAge: 30
+    session:
+      # Session超时时间（默认30分钟）
+      expireTime: 300
+      # 同步session到数据库的周期（默认1分钟）
+      dbSyncPeriod: 1
+      # 相隔多久检查一次session的有效性，默认就是10分钟
+      validationInterval: 10
+
+# 代码生成
+generate:
+  # 作者
+  author: Arnu
+  # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
+  packageName: me.arnu.admin.syncTask
+  # 模块名
+  moduleName: syncTask
+  # 功能名
+  functionName: sync_data
+  # 自动去除表前缀，默认是true
+  autoRemovePre: true
+  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
+  tablePrefix: ums_
+
+syncTask:
+  # JAVAHOME
+  JAVA_HOME: D:\dev\Java\jdk1.8.0\
+  # 日志目录
+  LOG_PATH: D:\tmp\

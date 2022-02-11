@@ -1,0 +1,69 @@
+<html layout:decorator="public/layout" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+
+    <!-- 表格工具栏 -->
+    <form class="layui-form toolbar">
+        <div class="layui-form-item">
+            <!-- 是否主键下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isPk|0|是否主键|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否自增下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isIncrement|0|是否自增|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否必填下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isRequired|0|是否必填|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否为插入字段下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isInsert|0|是否为插入字段|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否编辑字段下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isEdit|0|是否编辑字段|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否列表字段下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isList|0|是否列表字段|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <!-- 是否查询字段下拉单选 -->
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <widget:singleSelect name="isQuery|0|是否查询字段|name|id" data="1=是,2=否" value="0"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: auto;">
+                    <widget:btnQuery name="查询"/>
+                    <widget:btnAdd name="添加代码生成列"/>
+                    <widget:btnDAll name="批量删除"/>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- 数据表格 -->
+    <table class="layui-hide" id="tableList" lay-filter="tableList"></table>
+
+    <!-- 表格操作列 -->
+    <script type="text/html" id="toolBar">
+        <widget:btnEdit name="编辑"/>
+        <widget:btnDel name="删除"/>
+    </script>
+
+</div>
+</html>

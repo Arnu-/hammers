@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.arnu.system.mapper.MenuMapper">
+
+    <!-- 获取人员菜单权限列表 -->
+    <select id="getMenuListByUserId" resultType="me.arnu.system.entity.Menu">
+        SELECT m.* FROM sys_menu AS m
+        INNER JOIN sys_role_menu AS r ON m.id = r.menu_id
+        INNER JOIN sys_user_role AS ur ON ur.role_id=r.role_id
+        WHERE ur.user_id=#{userId} AND m.`status`=1 AND m.mark=1 AND r.mark=1
+        GROUP BY m.id ORDER BY m.sort ASC;
+    </select>
+
+    <!-- 获取导航菜单 -->
+    <select id="getPermissionMenuList" resultType="me.arnu.system.vo.MenuListVo">
+        SELECT m.* FROM sys_menu AS m
+        INNER JOIN sys_role_menu AS r ON m.id = r.menu_id
+        INNER JOIN sys_user_role AS ur ON ur.role_id=r.role_id
+        WHERE ur.user_id=#{userId} AND m.`status`=1 AND m.mark=1 AND r.mark=1 AND m.pid = #{pid}
+        GROUP BY m.id ORDER BY m.sort ASC;
+    </select>
+
+</mapper>

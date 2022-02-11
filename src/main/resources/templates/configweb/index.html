@@ -1,0 +1,102 @@
+<html layout:decorator="public/layout" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+<div class="layui-tab layui-tab-brief">
+	<widget:tabSelect name="tabId|name|id" sql="SELECT id, `name` FROM sys_config_group WHERE mark=1 ORDER BY sort ASC;" th:value="${tabId}?:0" href="/configweb/index"/>
+	<div class="layui-tab-content">
+		<form class="layui-form model-form" action="/configweb/configEdit" style="width:80%;">
+			<div class="layui-form-item" th:each="item:${configList}">
+				<label class="layui-form-label"><p th:text="${item['title']}+'：'"></p></label>
+			<div th:class="${item['type']}=='image' ? '' : 'layui-input-block'" th:switch="${item.type}">
+				<!-- 隐藏域 -->
+				<th th:case="hidden">
+				<input th:name="${item['tag']}" type="hidden" th:value="${item['value']}">
+				</th>
+				<!-- 只读文本 -->
+				<th th:case="readonly">
+				<div class="layui-input-inline">
+					<input th:name="${item['tag']}" readonly="readonly" th:value="${item['value']}" lay-verify="" autocomplete="off" th:placeholder="'请输入'+${item['title']}" class="layui-input" type="text">
+				</div>
+				</th>
+				<!-- 数字文本 -->
+				<th th:case="number">
+				<div class="layui-input-inline">
+					<input th:name="${item['tag']}" th:value="${item['value']}" lay-verify="required|number" autocomplete="off" th:placeholder="'请输入'+${item['title']}" class="layui-input" type="text">
+				</div>
+				</th>
+				<!-- 单行文本 -->
+				<th th:case="text">
+				<div class="layui-input-inline">
+					<input th:name="${item['tag']}" th:value="${item['value']}" lay-verify="required" autocomplete="off" th:placeholder="'请输入'+${item['title']}" class="layui-input" type="text">
+				</div>
+				</th>
+				<!-- 多行文本 -->
+				<th th:case="textarea">
+				<div class="layui-input-inline">
+					<textarea th:name="${item['tag']}" th:placeholder="'请输入'+${item['title']}" class="layui-textarea" th:text="${item['value']}"></textarea>
+				</div>
+				</th>
+				<!-- 密码文本 -->
+				<th th:case="password">
+				<div class="layui-input-inline">
+					<input th:name="${item['tag']}" th:value="${item['value']}" th:placeholder="'请输入'+${item['title']}" autocomplete="off" class="layui-input" type="password">
+				</div>
+				</th>
+				<!-- 单选按钮 -->
+				<th th:case="radio">
+					<widget:radioSelect th:name="${item['tag']}+'|name|id'" th:data="${item['options']}" th:value="${item['value']}"/>
+				</th>
+				<!-- 复选框按钮 -->
+				<th th:case="checkbox">
+					<widget:checkboxSingleSelect th:name="${item['tag']}+'|name|id'" th:data="${item['options']}" th:value="${item['value']}"/>
+				</th>
+				<!-- 下拉单选按钮 -->
+				<th th:case="select">
+				<div class="layui-input-inline">
+					<widget:singleSelect th:name="${item['tag']}+'|0|'+${item['title']}+'|name|id'" th:data="${item['options']}" th:value="${item['value']}?:1"/>
+				</div>
+				</th>
+				<!-- 图标 -->
+				<th th:case="icon">
+					<widget:iconPicker th:name="${item['tag']}" th:value="${item['value']}?:'layui-icon-home'"/>
+				</th>
+				<!-- 日期选择 -->
+				<th th:case="date">
+				<div class="layui-input-inline">
+					<widget:dateSelect th:name="${item['tag']}+'|'+${item['title']}+'|date'" th:value="${item['value']}"/>
+				</div>
+				</th>
+				<!-- 时间选择 -->
+				<th th:case="datetime">
+				<div class="layui-input-inline">
+					<widget:dateSelect th:name="${item['tag']}+'|'+${item['title']}+'|datetime'" th:value="${item['value']}"/>
+				</div>
+				</th>
+				<!-- 单图上传 -->
+				<th th:case="image">
+				<widget:uploadSingleImage th:name="${item['tag']} + '__upimage|'+${item['title']}+'|90x90|config|建议上传尺寸450x450|450x450'" th:value="${item['value']}"/>
+				</th>
+				<!-- 多图上传 -->
+				<th th:case="images">
+					<widget:uploadMultipleImage th:name="${item['tag']} + '__upimgs|'+${item['title']}+'|90x90|config|10'" th:value="${item['value']}"/>
+				</th>
+				<!-- 单文件上传 -->
+				<th th:case="file">
+
+				</th>
+				<!-- 多文件上传 -->
+				<th th:case="files">
+
+				</th>
+				<!-- 富文本 -->
+				<th th:case="ueditor">
+					<textarea th:name="${item['tag']}" th:placeholder="'请输入'+${item['title']}" class="layui-textarea" th:text="${item['value']}"></textarea>
+					<widget:kindEditor th:name="${item['tag']}" type="default" dirname="config" width="100%" height="350"/>
+				</th>
+			</div>
+			</div>
+			<widget:btnSubmit name="submit|立即保存"/>
+		</form>
+	</div>
+</div>
+</div>
+</html>

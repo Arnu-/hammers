@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.arnu.system.mapper.LoginLogMapper">
+
+    <!-- 创建系统登录日志 -->
+    <insert id="insertLoginLog" parameterType="me.arnu.system.entity.LoginLog">
+		insert into sys_login_log (title, login_name, login_time, login_ip, login_location, browser, os, status, type, msg)
+		values (#{title}, #{loginName}, sysdate(), #{loginIp}, #{loginLocation}, #{browser}, #{os}, #{status}, #{type}, #{msg}  )
+	</insert>
+
+</mapper>

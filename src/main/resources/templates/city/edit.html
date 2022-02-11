@@ -1,0 +1,65 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<input name="pid" id="pid" type="hidden" th:value="${info['pid']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">城市名称：</label>
+				<div class="layui-input-inline">
+					<input name="name" th:value="${info['name']}" lay-verify="required" autocomplete="off" placeholder="请输入城市名称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">城市级别：</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="level|1|城市级别|name|id" th:data="${CITY_LEVEL_LIST}" th:value="${info['level']}?:0"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">城市编号：</label>
+				<div class="layui-input-inline">
+					<input name="citycode" th:value="${info['citycode']}" lay-verify="required" autocomplete="off" placeholder="请输入城市编号（区号）" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">父级地理编号：</label>
+				<div class="layui-input-inline">
+					<input name="pAdcode" th:value="${info['pAdcode']}" lay-verify="required" autocomplete="off" placeholder="请输入父级地理编号" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">地理编号：</label>
+				<div class="layui-input-inline">
+					<input name="adcode" th:value="${info['adcode']}" lay-verify="required" autocomplete="off" placeholder="请输入地理编号" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">排序号：</label>
+				<div class="layui-input-inline">
+					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序号" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">城市经度：</label>
+				<div class="layui-input-inline">
+					<input name="lng" th:value="${info['lng']}" lay-verify="required|number" autocomplete="off" placeholder="请输入城市坐标中心点经度" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">城市纬度：</label>
+				<div class="layui-input-inline">
+					<input name="lat" th:value="${info['lat']}" lay-verify="required|number" autocomplete="off" placeholder="请输入城市坐标中心点纬度" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

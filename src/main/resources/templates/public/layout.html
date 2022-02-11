@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<!-- 引入头部 -->
+<header th:replace="./public/header :: header"></header>
+<body>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <!-- 内容区 -->
+        <div class="layui-card-body" layout:fragment="content">
+            内容区
+        </div>
+    </div>
+</div>
+<!-- 引入脚部 -->
+<footer th:replace="./public/footer :: footer"></footer>
+</body>
+</html>

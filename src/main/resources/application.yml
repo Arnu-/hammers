@@ -1,0 +1,81 @@
+spring:
+  profiles:
+    # 指定执行环境
+    active: dev #@package.environment@
+
+  # 服务模块
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: true
+
+  # 是否演示模式：true是,false否
+  app_debug: false
+
+# MyBatis
+#me.arnu.system.entity
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+#  mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: me.arnu.**.mapper
+  configuration:
+    # 开启驼峰命名法
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# actable的配置信息
+actable:
+  # update,
+  table.auto: update
+  model.pack: me.arnu.system.entity,me.arnu.admin.entity,me.arnu.generator.entity
+  database.type: mysql
+  # 自己定义的索引前缀#该配置项不设置默认使用actable_idx_
+  index.prefix: java_web_idx_
+  # 自己定义的唯一约束前缀#该配置项不设置默认使用actable_uni_
+  unique.prefix: java_web_uni_
+
+# Shiro相关配置
+shiro:
+  user:
+    # 登录地址
+    loginUrl: /login
+    # 权限认证失败地址
+    unauthorizedUrl: /unauth
+    # 首页地址
+    indexUrl: /index
+    # 验证码开关
+    captchaEnabled: true
+    # 验证码类型 math 数组计算 char 字符
+    captchaType: math
+  cookie:
+    # 设置Cookie的域名 默认空，即当前访问的域名
+    domain:
+    # 设置cookie的有效访问路径
+    path: /
+    # 设置HttpOnly属性
+    httpOnly: true
+    # 设置Cookie的过期时间，天为单位
+    maxAge: 30
+  session:
+    # Session超时时间，-1代表永不过期（默认30分钟）
+    expireTime: 30
+    # 同步session到数据库的周期（默认1分钟）
+    dbSyncPeriod: 1
+    # 相隔多久检查一次session的有效性，默认就是10分钟
+    validationInterval: 10
+    # 同一个用户最大会话数，比如2的意思是同一个账号允许最多同时两个人登录（默认-1不限制）
+    maxSession: -1
+    # 踢出之前登录的/之后登录的用户，默认踢出之前登录的用户
+    kickoutAfter: false
+
+# 系统信息
+system:
+  # 系统名称
+  fullName: 任务管理系统
+  # 系统简称
+  nickName: 任务管理系统
+  # 系统版本号
+  version: v0.0.1
