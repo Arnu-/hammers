@@ -1,0 +1,44 @@
+<html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
+<div layout:fragment="content">
+	<form class="layui-form model-form" action="" style="width:80%;">
+		<input name="id" type="hidden" th:value="${info['id']}?:0">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">员工：</label>
+				<div class="layui-input-inline">
+					<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入员工" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">请假类型：</label>
+				<div class="layui-input-inline">
+					<input name="dayOffTypeId" th:value="${info['dayOffTypeId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入请假类型" class="layui-input" type="text">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">开始时间：</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="startTime|开始时间|datetime" th:value="${info['startTime']}"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">结束时间：</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="endTime|结束时间|datetime" th:value="${info['endTime']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block">
+				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
+			</div>
+		</div>
+		<widget:btnSubmit name="submit|立即保存,close|关闭"/>
+	</form>
+</div>
+</html>

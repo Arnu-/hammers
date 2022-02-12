@@ -501,7 +501,7 @@ public class CodeGenerateUtils {
             entity.setName(tableAnnotation);
             entity.setIcon("layui-icon-home");
             entity.setUrl(String.format("/%s/index", entityName.toLowerCase()));
-            entity.setPid(112); // 系统工具菜单ID
+            entity.setPid(107); // 系统基础信息id
             entity.setType(3);
             entity.setPermission(String.format("sys:%s:index", entityName.toLowerCase()));
             entity.setStatus(1);

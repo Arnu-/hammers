@@ -393,3 +393,59 @@ CREATE TABLE `ums_employee` (
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
 ) comment='员工';
+
+
+CREATE TABLE `ums_level_annual_vacation_setting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `level_id` int(11) not null comment '级别id',
+  `days` int (11) not null default 5 comment '年假基数',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_user` int(11) DEFAULT '0' COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` int(11) DEFAULT '0' COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `mark` int(11) DEFAULT '1' COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) comment='级别年假基数';
+
+CREATE TABLE `ums_employee_special_annual_vacation_setting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) not null comment '员工',
+  `days` int (11) not null default 5 comment '年假基数',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_user` int(11) DEFAULT '0' COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` int(11) DEFAULT '0' COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `mark` int(11) DEFAULT '1' COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) comment = '员工年假特殊设置';
+
+CREATE TABLE `ums_day_off_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT null comment '类型名称',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_user` int(11) DEFAULT '0' COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` int(11) DEFAULT '0' COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `mark` int(11) DEFAULT '1' COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) comment='请假类型';
+
+CREATE TABLE `ums_ask_for_day_off_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) NOT null comment '员工',
+  `day_off_type_id` int(11) NOT null comment '请假类型',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `days` float default 0 comment '请假天数',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_user` int(11) DEFAULT '0' COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` int(11) DEFAULT '0' COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `mark` int(11) DEFAULT '1' COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) comment='请假记录';
+
