@@ -10,13 +10,13 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">真实姓名：</label>
+				<label class="layui-form-label layui-form-required">真实姓名：</label>
 				<div class="layui-input-inline">
 					<input name="realname" th:value="${info['realname']}" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" type="text">
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">昵称：</label>
+				<label class="layui-form-label layui-form-required">昵称：</label>
 				<div class="layui-input-inline">
 					<input name="nickname" th:value="${info['nickname']}" lay-verify="required" autocomplete="off" placeholder="请输入昵称" class="layui-input" type="text">
 				</div>
@@ -24,15 +24,15 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">性别：</label>
+				<label class="layui-form-label layui-form-required">性别：</label>
 				<div class="layui-input-inline">
-					<input name="gender" th:value="${info['gender']}" lay-verify="required|number" autocomplete="off" placeholder="请输入性别" class="layui-input" type="text">
+					<widget:singleSelect name="gender|1|性别|name|id" th:data="${USER_GENDER_LIST}" th:value="${info['gender']}?:3"/>
 				</div>
 			</div>
 			<div class="layui-inline">
 				<label class="layui-form-label">手机号码：</label>
 				<div class="layui-input-inline">
-					<input name="mobile" th:value="${info['mobile']}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
+					<input name="mobile" th:value="${info['mobile']}" lay-verify="phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
 				</div>
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 			<div class="layui-inline">
 				<label class="layui-form-label">电子邮箱：</label>
 				<div class="layui-input-inline">
-					<input name="email" th:value="${info['email']}" lay-verify="required|email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
+					<input name="email" th:value="${info['email']}" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
 				</div>
 			</div>
 			<div class="layui-inline">
@@ -52,57 +52,45 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">部门：</label>
+				<label class="layui-form-label layui-form-required">部门：</label>
 				<div class="layui-input-inline">
-					<input name="deptId" th:value="${info['deptId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入部门" class="layui-input" type="text">
+					<widget:singleSelect name="deptId|0|部门|name|id" sql="SELECT id,`name` FROM sys_dept WHERE pid=0 AND mark=1 ORDER BY sort ASC;" th:value="${info['deptId']}?:0"/>
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">级别：</label>
+				<label class="layui-form-label layui-form-required">级别：</label>
 				<div class="layui-input-inline">
-					<input name="levelId" th:value="${info['levelId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入级别" class="layui-input" type="text">
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">职位：</label>
-				<div class="layui-input-inline">
-					<input name="positionId" th:value="${info['positionId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入职位" class="layui-input" type="text">
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">省：</label>
-				<div class="layui-input-inline">
-					<input name="provinceId" th:value="${info['provinceId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入省" class="layui-input" type="text">
+					<widget:singleSelect name="levelId|1|职级|name|id" sql="SELECT id,`name` FROM sys_level WHERE `status`=1 AND mark=1;" th:value="${info['levelId']}?:0"/>
 				</div>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">市：</label>
+				<label class="layui-form-label layui-form-required">职位：</label>
 				<div class="layui-input-inline">
-					<input name="cityId" th:value="${info['cityId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入市" class="layui-input" type="text">
+					<widget:singleSelect name="positionId|1|职位|name|id" sql="SELECT id,`name` FROM sys_position WHERE `status`=1 AND mark=1;" th:value="${info['positionId']}?:0"/>
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">区/县：</label>
+				<label class="layui-form-label layui-form-required">员工号：</label>
 				<div class="layui-input-inline">
-					<input name="districtId" th:value="${info['districtId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入区/县" class="layui-input" type="text">
+					<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required" placeholder="请输入员工号" autocomplete="off" class="layui-input" type="text">
 				</div>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
+				<label class="layui-form-label">所属城市：</label>
+				<div class="layui-input-inline">
+					<widget:citySingleSelect th:value="${info['districtId']} ?: 0" limit="3"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="">
 				<label class="layui-form-label">地址：</label>
-				<div class="layui-input-inline">
-					<input name="address" th:value="${info['address']}" lay-verify="required" autocomplete="off" placeholder="请输入地址" class="layui-input" type="text">
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">城市名：</label>
-				<div class="layui-input-inline">
-					<input name="cityName" th:value="${info['cityName']}" lay-verify="required" autocomplete="off" placeholder="请输入城市名" class="layui-input" type="text">
+				<div class="layui-input-block">
+					<input name="address" th:value="${info['address']}" autocomplete="off" placeholder="请输入地址" class="layui-input" type="text">
 				</div>
 			</div>
 		</div>
@@ -127,18 +115,18 @@
 					<widget:dateSelect name="leaveDate|离职日期|datetime" th:value="${info['leaveDate']}"/>
 				</div>
 			</div>
+		</div>
+		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">状态：</label>
+				<label class="layui-form-label layui-form-required">状态：</label>
 				<div class="layui-input-inline">
 					<input name="status" th:value="${info['status']}" lay-verify="required|number" autocomplete="off" placeholder="请输入状态" class="layui-input" type="text">
 				</div>
 			</div>
-		</div>
-		<div class="layui-form-item">
 			<div class="layui-inline">
 				<label class="layui-form-label">排序：</label>
 				<div class="layui-input-inline">
-					<input name="sort" th:value="${info['sort']}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
+					<input name="sort" th:value="${info['sort']}" lay-verify="number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
 				</div>
 			</div>
 		</div>

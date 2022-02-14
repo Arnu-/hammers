@@ -26,17 +26,6 @@ mybatis-plus:
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# actable的配置信息
-actable:
-  # update,
-  table.auto: update
-  model.pack: me.arnu.system.entity,me.arnu.admin.entity,me.arnu.generator.entity
-  database.type: mysql
-  # 自己定义的索引前缀#该配置项不设置默认使用actable_idx_
-  index.prefix: java_web_idx_
-  # 自己定义的唯一约束前缀#该配置项不设置默认使用actable_uni_
-  unique.prefix: java_web_uni_
-
 # Shiro相关配置
 shiro:
   user:

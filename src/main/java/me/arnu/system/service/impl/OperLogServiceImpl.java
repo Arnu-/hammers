@@ -6,7 +6,6 @@
 #@2021-06-10
 */
 
-
 package me.arnu.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -85,11 +84,13 @@ public class OperLogServiceImpl extends BaseServiceImpl<OperLogMapper, OperLog> 
                 BeanUtils.copyProperties(item, operLogListVo);
                 // 业务类型描述
                 if (operLogListVo.getBusinessType() != null && operLogListVo.getBusinessType() > 0) {
-                    operLogListVo.setBusinessTypeName(OperLogConstant.OPERLOG_BUSINESSTYPE_LIST.get(operLogListVo.getBusinessType()));
+                    operLogListVo.setBusinessTypeName(
+                            OperLogConstant.OPERLOG_BUSINESSTYPE_LIST.get(operLogListVo.getBusinessType()));
                 }
                 // 操作类别描述
                 if (operLogListVo.getOperatorType() != null && operLogListVo.getOperatorType() > 0) {
-                    operLogListVo.setOperatorTypeName(OperLogConstant.OPERLOG_OPERATORTYPE_LIST.get(operLogListVo.getOperatorType()));
+                    operLogListVo.setOperatorTypeName(
+                            OperLogConstant.OPERLOG_OPERATORTYPE_LIST.get(operLogListVo.getOperatorType()));
                 }
                 // 操作状态描述
                 if (operLogListVo.getStatus() != null && operLogListVo.getStatus() > 0) {
@@ -126,6 +127,10 @@ public class OperLogServiceImpl extends BaseServiceImpl<OperLogMapper, OperLog> 
      */
     @Override
     public void insertOperlog(OperLog operLog) {
+        // 对于某些json数据过长的字段，需要处理
+        if (operLog.getJsonResult().length() > 2000) {
+            operLog.setJsonResult(operLog.getJsonResult().substring(0, 2000));
+        }
         operLogMapper.insertOperlog(operLog);
     }
 

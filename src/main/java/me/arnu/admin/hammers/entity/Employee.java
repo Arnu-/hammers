@@ -37,6 +37,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Employee extends BaseEntity {
 
     /**
+     * 员工号
+     */
+    private String employeeId;
+
+    /**
      * 真实姓名
      */
     private String realname;
@@ -133,6 +138,11 @@ public class Employee extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date leaveDate;
+
+    /**
+     * 工龄
+     */
+    private Float workYear;
 
     /**
      * 状态

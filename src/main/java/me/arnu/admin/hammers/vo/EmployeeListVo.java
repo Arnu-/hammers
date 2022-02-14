@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -31,6 +30,11 @@ public class EmployeeListVo {
      * 员工ID
      */
     private Integer id;
+
+    /**
+     * 员工号
+     */
+    private String employeeId;
 
     /**
      * 真实姓名
@@ -134,6 +138,11 @@ public class EmployeeListVo {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date leaveDate;
+
+    /**
+     * 工龄
+     */
+    private Float workYear;
 
     /**
      * 状态

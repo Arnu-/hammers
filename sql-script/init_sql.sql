@@ -242,7 +242,7 @@ CREATE TABLE `sys_oper_log` (
   `oper_ip` varchar(255) DEFAULT NULL,
   `oper_location` varchar(255) DEFAULT NULL,
   `oper_param` varchar(2000) DEFAULT NULL,
-  `json_result` varchar(255) DEFAULT NULL,
+  `json_result` varchar(2000) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   `error_msg` text,
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -365,6 +365,7 @@ CREATE TABLE `sys_position` (
 
 CREATE TABLE `ums_employee` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `employee_id` NOT NULL COMMENT '员工号',
   `realname` varchar(255) DEFAULT NULL COMMENT '真实姓名',
   `nickname` varchar(255) DEFAULT NULL COMMENT '昵称',
   `gender` int(11) DEFAULT NULL COMMENT '性别',
@@ -383,6 +384,7 @@ CREATE TABLE `ums_employee` (
   `enrollment_date` datetime DEFAULT NULL COMMENT '入职日期',
   `formal_date` datetime DEFAULT NULL COMMENT '转正日期',
   `leave_date` datetime DEFAULT NULL COMMENT '离职日期',
+  `work_year` float default 0.1 comment '工龄',
   `status` int(11) DEFAULT NULL COMMENT '状态',
   `note` varchar(255) DEFAULT NULL COMMENT '备注',
   `sort` int(11) DEFAULT NULL COMMENT '排序',
@@ -449,3 +451,16 @@ CREATE TABLE `ums_ask_for_day_off_log` (
   PRIMARY KEY (`id`)
 ) comment='请假记录';
 
+CREATE TABLE `ums_nature_year_annual_vacation_balance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) NOT null comment '员工',
+  `year` int(11) NOT null comment '年份',
+  `days` float default 0 comment '剩余天数',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_user` int(11) DEFAULT '0' COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` int(11) DEFAULT '0' COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `mark` int(11) DEFAULT '1' COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) comment='自然年结余天数';

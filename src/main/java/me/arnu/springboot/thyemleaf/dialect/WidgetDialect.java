@@ -32,6 +32,11 @@ public class WidgetDialect extends AbstractProcessorDialect {
         processor.add(new SwitchCheckElementProcessor(PREFIX));
         processor.add(new ButtonAddElementProcessor(PREFIX));
         processor.add(new ButtonDAllElementProcessor(PREFIX));
+        processor.add(new ButtonEAllElementProcessor(PREFIX));
+        processor.add(new ButtonSAllElementProcessor(PREFIX));
+        processor.add(new ButtonExportElementProcessor(PREFIX));
+        processor.add(new ButtonImportElementProcessor(PREFIX));
+        
         processor.add(new ButtonQueryElementProcessor(PREFIX));
         processor.add(new ButtonEditElementProcessor(PREFIX));
         processor.add(new ButtonDeleteElementProcessor(PREFIX));
