@@ -3,13 +3,13 @@
 	<form class="layui-form model-form" action="" >
 		<input name="id" type="hidden" th:value="${info['id']}?:0">
 		<div class="layui-form-item">
-			<label class="layui-form-label">级别id：</label>
-			<div class="layui-input-block">
-				<input name="levelId" th:value="${info['levelId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入级别id" class="layui-input" type="text">
+			<label class="layui-form-label layui-form-required">级别：</label>
+			<div class="layui-input-inline">
+				<widget:singleSelect name="levelId|1|职级|name|id" sql="SELECT id,`name` FROM sys_level WHERE `status`=1 AND mark=1 AND id not in (SELECT level_id from ums_level_annual_vacation_setting WHERE  `status`=1 AND mark=1);" th:value="${info['levelId']}?:0"/>
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">年假基数：</label>
+			<label class="layui-form-label layui-form-required">年假基数：</label>
 			<div class="layui-input-block">
 				<input name="days" th:value="${info['days']}" lay-verify="required|number" autocomplete="off" placeholder="请输入年假基数" class="layui-input" type="text">
 			</div>

@@ -39,7 +39,7 @@ public class AskForDayOffLog extends BaseEntity {
     /**
      * 员工
      */
-    private Integer employeeId;
+    private String employeeId;
 
     /**
      * 请假类型
@@ -47,18 +47,28 @@ public class AskForDayOffLog extends BaseEntity {
     private Integer dayOffTypeId;
 
     /**
-     * 开始时间
+     * 开始日期
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
-    private Date startTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    private Date startDate;
+
+    /**
+     * 开始半天，选择上午、下午
+     */
+    private String startHalfDay;
 
     /**
      * 结束时间
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
-    private Date endTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    private Date endDate;
+
+    /**
+     * 结束半天，选择上午、下午
+     */
+    private String endHalfDay;
 
     /**
      * 请假天数

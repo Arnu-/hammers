@@ -12,17 +12,17 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.arnu.common.common.BaseQuery;
-import me.arnu.system.common.BaseServiceImpl;
-import me.arnu.common.config.CommonConfig;
-import me.arnu.common.utils.CommonUtils;
-import me.arnu.common.utils.JsonResult;
-import me.arnu.common.utils.StringUtils;
-import me.arnu.admin.hammers.constant.EmployeeConstant;
 import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.admin.hammers.query.EmployeeQuery;
 import me.arnu.admin.hammers.service.IEmployeeService;
+import me.arnu.admin.hammers.vo.EmployeeListVo;
+import me.arnu.common.common.BaseQuery;
+import me.arnu.common.config.CommonConfig;
+import me.arnu.common.utils.CommonUtils;
+import me.arnu.common.utils.JsonResult;
+import me.arnu.common.utils.StringUtils;
+import me.arnu.system.common.BaseServiceImpl;
 import me.arnu.system.entity.Dept;
 import me.arnu.system.entity.Level;
 import me.arnu.system.entity.Position;
@@ -30,9 +30,6 @@ import me.arnu.system.mapper.DeptMapper;
 import me.arnu.system.mapper.LevelMapper;
 import me.arnu.system.mapper.PositionMapper;
 import me.arnu.system.utils.UserUtils;
-import me.arnu.admin.hammers.vo.EmployeeListVo;
-import org.apache.commons.collections.Bag;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -303,6 +300,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                     .setDeptId(deptId)
                     .setLevelId(levelId)
                     .setPositionId(posId)
+                    .setWorkYear(vo.getWorkYear())
                     .setEnrollmentDate(vo.getEnrollmentDate())
                     .setFormalDate(vo.getFormalDate())
                     .setLeaveDate(vo.getLeaveDate())
@@ -316,7 +314,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
             }
         }
         return JsonResult.success("成功写入 " + successCount
-                        + " 条数据。请通过界面备注检查未写入数据问题原因"
+                        + " 条数据。"
                 , badInfoList);
         // return JsonResult.error("未实现功能");
     }

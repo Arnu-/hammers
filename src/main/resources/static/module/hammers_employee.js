@@ -138,16 +138,34 @@ layui.use(['func', 'table', 'upload'], function () {
             }("addBatch", a);
             func.ajaxPost(url, result, function (res, success) {
                 console.log(res.msg);
+                let showMsg = res.msg;
+                let layerOpt = {
+                                                       type: 1
+                                                       ,offset: 'auto'
+                                                       ,id: 'importMsg' //防止重复弹出
+                                                       ,btn: '知道了'
+                                                       ,btnAlign: 'c' //按钮居中
+                                                       ,shade: 0 //不显示遮罩
+                                                     };
+                                                     // ,content: '<div style="padding: 20px 100px;">'+ showMsg +'</div>'
+                                                     /*
+
+                                                       ,yse: function(){
+                                                         layer.closeAll("iframe");
+                                                         parent.location.reload();
+                                                       }
+                                                     */
+                if(Array.isArray(res.data) && res.data.length > 0){
+                    showMsg = showMsg + "请通过界面备注检查未写入数据问题原因";
+                }else{
+                    layerOpt['yes'] = function(){
+                                                                                               layer.closeAll("iframe");
+                                                                                               parent.location.reload();
+                                                                                             }
+                }
+                    layerOpt['content'] = '<div style="padding: 20px 100px;">'+ showMsg +'</div>';
                 table.reload("importTableList", {data:res.data});
-                layer.open({
-                        type: 1
-                        ,offset: 'auto'
-                        ,id: 'importMsg' //防止重复弹出
-                        ,content: '<div style="padding: 20px 100px;">'+ res.msg +'</div>'
-                        ,btn: '知道了'
-                        ,btnAlign: 'c' //按钮居中
-                        ,shade: 0 //不显示遮罩
-                      });
+                layer.open(layerOpt);
 
                 // layer.closeAll("iframe");
                 // 刷新父页面

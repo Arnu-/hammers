@@ -22,4 +22,6 @@ import java.util.Map;
  */
 public class AskForDayOffLogConstant {
 
+    public static final String AM = "上午";
+    public static final String PM = "下午";
 }

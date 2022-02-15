@@ -14,9 +14,10 @@ layui.use(['func'], function () {
         var cols = [
               {type: 'checkbox', fixed: 'left'}
             , {field: 'id', width: 80, title: 'ID', align: 'center', sort: true, fixed: 'left'}
-            , {field: 'employeeId', width: 100, title: '员工', align: 'center'}
+            , {field: 'employeeId', width: 100, title: '员工ID', align: 'center'}
+            , {field: 'realName', width: 100, title: '员工', align: 'center'}
             , {field: 'days', width: 100, title: '年假基数', align: 'center'}
-            , {field: 'note', width: 100, title: '备注', align: 'center'}
+            , {field: 'note', width: 180, title: '备注', align: 'center'}
             , {field: 'createUserName', width: 100, title: '创建人', align: 'center'}
             , {field: 'createTime', width: 180, title: '创建时间', align: 'center'}
             , {field: 'updateUserName', width: 100, title: '更新人', align: 'center'}
@@ -28,7 +29,7 @@ layui.use(['func'], function () {
         func.tableIns(cols, "tableList");
 
         //【设置弹框】
-        func.setWin("员工年假特殊设置", 500, 300);
+        func.setWin("员工年假特殊设置", 500, 450);
 
     }
 });

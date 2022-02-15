@@ -98,8 +98,8 @@
         left join sys_level sl  on ue.level_id = sl.id
         left join sys_dept sd on ue.dept_id = sd.id
         left join ums_level_annual_vacation_setting ulavs on ue.level_id = ulavs .level_id
-        left join ums_employee_special_annual_vacation_setting uesavs on uesavs.employee_id = ue.id
-        left join ums_nature_year_annual_vacation_balance unyavb on unyavb.employee_id = ue.id and unyavb.`year` = (year(now())-1)
+        left join ums_employee_special_annual_vacation_setting uesavs on uesavs.employee_id = ue.employee_id
+        left join ums_nature_year_annual_vacation_balance unyavb on unyavb.employee_id = ue.employee_id and unyavb.`year` = (year(now())-1)
         where 1=1
         <if test="name != null and name != ''">
             AND lower(ue.realname) like lower(concat('%', #{name}, '%'))
@@ -111,8 +111,8 @@
         from ums_ask_for_day_off_log uafdol
         where
         day_off_type_id=1
-        and start_time >= #{startDate}
-        and end_time < #{endDate}
+        and start_date >= #{startDate}
+        and end_date < #{endDate}
         group by employee_id
         ]]>
     </select>

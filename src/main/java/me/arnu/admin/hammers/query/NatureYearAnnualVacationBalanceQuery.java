@@ -22,5 +22,6 @@ import lombok.Data;
  */
 @Data
 public class NatureYearAnnualVacationBalanceQuery extends BaseQuery {
-
+    private String employeeId;
+    private String year;
 }

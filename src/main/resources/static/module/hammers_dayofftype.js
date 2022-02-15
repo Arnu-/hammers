@@ -27,7 +27,7 @@ layui.use(['func'], function () {
         func.tableIns(cols, "tableList");
 
         //【设置弹框】
-        func.setWin("请假类型", 500, 300);
+        func.setWin("请假类型", 500, 350);
 
     }
 });

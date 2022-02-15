@@ -39,7 +39,7 @@ public class EmployeeSpecialAnnualVacationSetting extends BaseEntity {
     /**
      * 员工
      */
-    private Integer employeeId;
+    private String employeeId;
 
     /**
      * 年假基数

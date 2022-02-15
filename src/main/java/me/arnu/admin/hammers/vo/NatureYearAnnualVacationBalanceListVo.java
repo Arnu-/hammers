@@ -35,7 +35,12 @@ public class NatureYearAnnualVacationBalanceListVo {
     /**
      * 员工
      */
-    private Integer employeeId;
+    private String employeeId;
+
+    /**
+     * 员工姓名
+     */
+    private String realName;
 
     /**
      * 年份
@@ -66,7 +71,7 @@ public class NatureYearAnnualVacationBalanceListVo {
      * 创建时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
@@ -83,7 +88,7 @@ public class NatureYearAnnualVacationBalanceListVo {
      * 更新时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
 }

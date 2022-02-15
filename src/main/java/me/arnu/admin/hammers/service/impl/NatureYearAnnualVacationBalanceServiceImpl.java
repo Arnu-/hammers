@@ -12,6 +12,8 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.arnu.admin.hammers.entity.Employee;
+import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.system.common.BaseServiceImpl;
 import me.arnu.common.config.CommonConfig;
@@ -31,7 +33,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,6 +51,22 @@ public class NatureYearAnnualVacationBalanceServiceImpl extends BaseServiceImpl<
     @Autowired
     private NatureYearAnnualVacationBalanceMapper natureYearAnnualVacationBalanceMapper;
 
+    @Autowired
+    private EmployeeMapper employeeMapper;
+
+    private Map<String, String> loadEmpRealName(List<String> empIds) {
+        QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("mark", 1);
+        queryWrapper.orderByDesc("id");
+        queryWrapper.in("employee_id", empIds);
+        List<Employee> eList = employeeMapper.selectList(queryWrapper);
+        Map<String, String> eMap = new HashMap<>();
+        for (Employee employee : eList) {
+            eMap.put(employee.getEmployeeId(), employee.getRealname());
+        }
+        return eMap;
+    }
+
     /**
      * 获取数据列表
      *
@@ -58,6 +78,13 @@ public class NatureYearAnnualVacationBalanceServiceImpl extends BaseServiceImpl<
         NatureYearAnnualVacationBalanceQuery natureYearAnnualVacationBalanceQuery = (NatureYearAnnualVacationBalanceQuery) query;
         // 查询条件
         QueryWrapper<NatureYearAnnualVacationBalance> queryWrapper = new QueryWrapper<>();
+
+        if (!StringUtils.isEmpty(natureYearAnnualVacationBalanceQuery.getEmployeeId())) {
+            queryWrapper.like("employee_id", natureYearAnnualVacationBalanceQuery.getEmployeeId());
+        }
+        if (!StringUtils.isEmpty(natureYearAnnualVacationBalanceQuery.getYear())) {
+            queryWrapper.like("year", natureYearAnnualVacationBalanceQuery.getYear());
+        }
         queryWrapper.eq("mark", 1);
         queryWrapper.orderByDesc("id");
 
@@ -67,10 +94,17 @@ public class NatureYearAnnualVacationBalanceServiceImpl extends BaseServiceImpl<
         List<NatureYearAnnualVacationBalance> natureYearAnnualVacationBalanceList = data.getRecords();
         List<NatureYearAnnualVacationBalanceListVo> natureYearAnnualVacationBalanceListVoList = new ArrayList<>();
         if (!natureYearAnnualVacationBalanceList.isEmpty()) {
+            List<String> empIds = new ArrayList<>();
+            for (NatureYearAnnualVacationBalance natureYearAnnualVacationBalance : natureYearAnnualVacationBalanceList) {
+                empIds.add(natureYearAnnualVacationBalance.getEmployeeId());
+            }
+            Map<String, String> eMap = loadEmpRealName(empIds);
             natureYearAnnualVacationBalanceList.forEach(item -> {
                 NatureYearAnnualVacationBalanceListVo natureYearAnnualVacationBalanceListVo = new NatureYearAnnualVacationBalanceListVo();
                 // 拷贝属性
                 BeanUtils.copyProperties(item, natureYearAnnualVacationBalanceListVo);
+                // 员工姓名
+                natureYearAnnualVacationBalanceListVo.setRealName(eMap.get(natureYearAnnualVacationBalanceListVo.getEmployeeId()));
                 // 创建人名称
                 if (natureYearAnnualVacationBalanceListVo.getCreateUser() != null && natureYearAnnualVacationBalanceListVo.getCreateUser() > 0) {
                     natureYearAnnualVacationBalanceListVo.setCreateUserName(UserUtils.getName((natureYearAnnualVacationBalanceListVo.getCreateUser())));

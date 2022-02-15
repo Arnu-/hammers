@@ -22,5 +22,5 @@ import lombok.Data;
  */
 @Data
 public class AskForDayOffLogQuery extends BaseQuery {
-
+    private String employeeId;
 }

@@ -14,7 +14,7 @@ layui.use(['func'], function () {
         var cols = [
               {type: 'checkbox', fixed: 'left'}
             , {field: 'id', width: 80, title: 'ID', align: 'center', sort: true, fixed: 'left'}
-            , {field: 'levelId', width: 100, title: '级别id', align: 'center'}
+            , {field: 'level', width: 100, title: '级别', align: 'center'}
             , {field: 'days', width: 100, title: '年假基数', align: 'center'}
             , {field: 'note', width: 100, title: '备注', align: 'center'}
             , {field: 'createUserName', width: 100, title: '创建人', align: 'center'}
@@ -28,7 +28,7 @@ layui.use(['func'], function () {
         func.tableIns(cols, "tableList");
 
         //【设置弹框】
-        func.setWin("级别年假基数", 500, 300);
+        func.setWin("级别年假基数", 600, 450);
 
     }
 });

@@ -47,7 +47,7 @@ public class LevelAnnualVacationSettingListVo {
     /**
      * 年假基数
      */
-    @Excel(name = "年假天数", cellType = Excel.ColumnType.NUMERIC)
+    @Excel(name = "年假基数", cellType = Excel.ColumnType.NUMERIC)
     private Integer days;
 
     /**

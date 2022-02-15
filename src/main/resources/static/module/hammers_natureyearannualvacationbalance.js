@@ -14,7 +14,8 @@ layui.use(['func'], function () {
         var cols = [
               {type: 'checkbox', fixed: 'left'}
             , {field: 'id', width: 80, title: 'ID', align: 'center', sort: true, fixed: 'left'}
-            , {field: 'employeeId', width: 100, title: '员工', align: 'center'}
+            , {field: 'employeeId', width: 100, title: '员工ID', align: 'center'}
+            , {field: 'realName', width: 100, title: '员工', align: 'center'}
             , {field: 'year', width: 100, title: '年份', align: 'center'}
             , {field: 'days', width: 100, title: '剩余天数', align: 'center'}
             , {field: 'note', width: 100, title: '备注', align: 'center'}

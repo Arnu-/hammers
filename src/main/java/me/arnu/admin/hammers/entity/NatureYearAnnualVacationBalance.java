@@ -39,7 +39,7 @@ public class NatureYearAnnualVacationBalance extends BaseEntity {
     /**
      * 员工
      */
-    private Integer employeeId;
+    private String employeeId;
 
     /**
      * 年份

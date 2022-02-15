@@ -12,6 +12,9 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.arnu.admin.hammers.entity.Employee;
+import me.arnu.admin.hammers.entity.NatureYearAnnualVacationBalance;
+import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.system.common.BaseServiceImpl;
 import me.arnu.common.config.CommonConfig;
@@ -31,7 +34,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,6 +52,22 @@ public class EmployeeSpecialAnnualVacationSettingServiceImpl extends BaseService
     @Autowired
     private EmployeeSpecialAnnualVacationSettingMapper employeeSpecialAnnualVacationSettingMapper;
 
+    @Autowired
+    private EmployeeMapper employeeMapper;
+
+    private Map<String, String> loadEmpRealName(List<String> empIds) {
+        QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("mark", 1);
+        queryWrapper.orderByDesc("id");
+        queryWrapper.in("employee_id", empIds);
+        List<Employee> eList = employeeMapper.selectList(queryWrapper);
+        Map<String, String> eMap = new HashMap<>();
+        for (Employee employee : eList) {
+            eMap.put(employee.getEmployeeId(), employee.getRealname());
+        }
+        return eMap;
+    }
+
     /**
      * 获取数据列表
      *
@@ -58,6 +79,10 @@ public class EmployeeSpecialAnnualVacationSettingServiceImpl extends BaseService
         EmployeeSpecialAnnualVacationSettingQuery employeeSpecialAnnualVacationSettingQuery = (EmployeeSpecialAnnualVacationSettingQuery) query;
         // 查询条件
         QueryWrapper<EmployeeSpecialAnnualVacationSetting> queryWrapper = new QueryWrapper<>();
+        // 手机
+        if (!StringUtils.isEmpty(employeeSpecialAnnualVacationSettingQuery.getEmployeeId())) {
+            queryWrapper.like("employee_id", employeeSpecialAnnualVacationSettingQuery.getEmployeeId());
+        }
         queryWrapper.eq("mark", 1);
         queryWrapper.orderByDesc("id");
 
@@ -67,10 +92,17 @@ public class EmployeeSpecialAnnualVacationSettingServiceImpl extends BaseService
         List<EmployeeSpecialAnnualVacationSetting> employeeSpecialAnnualVacationSettingList = data.getRecords();
         List<EmployeeSpecialAnnualVacationSettingListVo> employeeSpecialAnnualVacationSettingListVoList = new ArrayList<>();
         if (!employeeSpecialAnnualVacationSettingList.isEmpty()) {
+            List<String> empIds = new ArrayList<>();
+            for (EmployeeSpecialAnnualVacationSetting employeeSpecialAnnualVacationSetting : employeeSpecialAnnualVacationSettingList) {
+                empIds.add(employeeSpecialAnnualVacationSetting.getEmployeeId());
+            }
+            Map<String, String> eMap = loadEmpRealName(empIds);
             employeeSpecialAnnualVacationSettingList.forEach(item -> {
                 EmployeeSpecialAnnualVacationSettingListVo employeeSpecialAnnualVacationSettingListVo = new EmployeeSpecialAnnualVacationSettingListVo();
                 // 拷贝属性
                 BeanUtils.copyProperties(item, employeeSpecialAnnualVacationSettingListVo);
+                // 员工姓名
+                employeeSpecialAnnualVacationSettingListVo.setRealName(eMap.get(employeeSpecialAnnualVacationSettingListVo.getEmployeeId()));
                 // 创建人名称
                 if (employeeSpecialAnnualVacationSettingListVo.getCreateUser() != null && employeeSpecialAnnualVacationSettingListVo.getCreateUser() > 0) {
                     employeeSpecialAnnualVacationSettingListVo.setCreateUserName(UserUtils.getName((employeeSpecialAnnualVacationSettingListVo.getCreateUser())));

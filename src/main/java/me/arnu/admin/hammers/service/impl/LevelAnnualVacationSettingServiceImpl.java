@@ -12,6 +12,8 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.arnu.admin.hammers.entity.Employee;
+import me.arnu.admin.hammers.query.EmployeeQuery;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.system.common.BaseServiceImpl;
 import me.arnu.common.config.CommonConfig;
@@ -23,6 +25,7 @@ import me.arnu.admin.hammers.entity.LevelAnnualVacationSetting;
 import me.arnu.admin.hammers.mapper.LevelAnnualVacationSettingMapper;
 import me.arnu.admin.hammers.query.LevelAnnualVacationSettingQuery;
 import me.arnu.admin.hammers.service.ILevelAnnualVacationSettingService;
+import me.arnu.system.entity.Level;
 import me.arnu.system.mapper.LevelMapper;
 import me.arnu.system.utils.UserUtils;
 import me.arnu.admin.hammers.vo.LevelAnnualVacationSettingListVo;
@@ -32,7 +35,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -50,7 +55,16 @@ public class LevelAnnualVacationSettingServiceImpl extends BaseServiceImpl<Level
     @Autowired
     private LevelMapper levelMapper;
 
-
+    private Map<Integer, String> loadLevelProperty() {
+        List<Level> levels = levelMapper.selectList(new QueryWrapper<Level>() {{
+            eq("mark", 1);
+        }});
+        Map<Integer, String> levelMap = new HashMap<>();
+        for (Level level : levels) {
+            levelMap.put(level.getId(), level.getName());
+        }
+        return levelMap;
+    }
 
     /**
      * 获取数据列表
@@ -72,10 +86,15 @@ public class LevelAnnualVacationSettingServiceImpl extends BaseServiceImpl<Level
         List<LevelAnnualVacationSetting> levelAnnualVacationSettingList = data.getRecords();
         List<LevelAnnualVacationSettingListVo> levelAnnualVacationSettingListVoList = new ArrayList<>();
         if (!levelAnnualVacationSettingList.isEmpty()) {
+            Map<Integer, String> lmap = loadLevelProperty();
             levelAnnualVacationSettingList.forEach(item -> {
                 LevelAnnualVacationSettingListVo levelAnnualVacationSettingListVo = new LevelAnnualVacationSettingListVo();
                 // 拷贝属性
                 BeanUtils.copyProperties(item, levelAnnualVacationSettingListVo);
+                // 级别
+                if (levelAnnualVacationSettingListVo.getLevelId() != null && levelAnnualVacationSettingListVo.getLevelId() > 0) {
+                    levelAnnualVacationSettingListVo.setLevel(lmap.get(levelAnnualVacationSettingListVo.getLevelId()));
+                }
                 // 创建人名称
                 if (levelAnnualVacationSettingListVo.getCreateUser() != null && levelAnnualVacationSettingListVo.getCreateUser() > 0) {
                     levelAnnualVacationSettingListVo.setCreateUserName(UserUtils.getName((levelAnnualVacationSettingListVo.getCreateUser())));

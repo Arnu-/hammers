@@ -3,13 +3,13 @@
 	<form class="layui-form model-form" action="" >
 		<input name="id" type="hidden" th:value="${info['id']}?:0">
 		<div class="layui-form-item">
-			<label class="layui-form-label">员工：</label>
+			<label class="layui-form-label layui-form-required">员工号：</label>
 			<div class="layui-input-block">
-				<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required|number" autocomplete="off" placeholder="请输入员工" class="layui-input" type="text">
+				<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required" autocomplete="off" placeholder="请输入员工号" class="layui-input" type="text">
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<label class="layui-form-label">年假基数：</label>
+			<label class="layui-form-label layui-form-required">年假基数：</label>
 			<div class="layui-input-block">
 				<input name="days" th:value="${info['days']}" lay-verify="required|number" autocomplete="off" placeholder="请输入年假基数" class="layui-input" type="text">
 			</div>

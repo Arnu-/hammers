@@ -107,17 +107,17 @@ public class DayOffServiceImpl implements IDayOffService {
 //            summaryVoMap.put(vo.getEmployeeId(), vo);
 //        }
 
-        Map<Integer, Double> firstDayOffMap = new HashMap<>();
-        Map<Integer, Double> secondDayOffMap = null;
+        Map<String, Double> firstDayOffMap = new HashMap<>();
+        Map<String, Double> secondDayOffMap = null;
 
         for (Map<String, Object> map : empDayOffFirstHalfList) {
-            firstDayOffMap.put((int) map.get("employee_id"), (double) map.get("dayoff"));
+            firstDayOffMap.put((String) map.get("employee_id"), (double) map.get("dayoff"));
         }
 
         if (empDayOffSecondHalfList != null) {
             secondDayOffMap = new HashMap<>();
             for (Map<String, Object> map : empDayOffSecondHalfList) {
-                secondDayOffMap.put((int) map.get("employee_id"), (double) map.get("dayoff"));
+                secondDayOffMap.put((String) map.get("employee_id"), (double) map.get("dayoff"));
             }
         }
 
@@ -126,7 +126,7 @@ public class DayOffServiceImpl implements IDayOffService {
             // 5.1 取出对应人的请假状态
             // 5.2 根据请假前、后半年设定来计算
             // 5.3 去年残留还有就先扣去年，去年没有就开始扣今年。
-            int empId = vo.getId();
+            String empId = vo.getEmployeeId();
             double firstDayOff = firstDayOffMap.getOrDefault(empId, 0d);
             double secondDayOff = secondDayOffMap == null ? 0d :
                     secondDayOffMap.getOrDefault(empId, 0d);

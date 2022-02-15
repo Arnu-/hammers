@@ -410,7 +410,7 @@ CREATE TABLE `ums_level_annual_vacation_setting` (
 
 CREATE TABLE `ums_employee_special_annual_vacation_setting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `employee_id` int(11) not null comment '员工',
+  `employee_id` varchar(255) not null comment '员工号',
   `days` int (11) not null default 5 comment '年假基数',
   `note` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_user` int(11) DEFAULT '0' COMMENT '创建人',
@@ -435,10 +435,12 @@ CREATE TABLE `ums_day_off_type` (
 
 CREATE TABLE `ums_ask_for_day_off_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `employee_id` int(11) NOT null comment '员工',
+  `employee_id` varchar(255) not null comment '员工号',
   `day_off_type_id` int(11) NOT null comment '请假类型',
-  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
-  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `start_date` datetime DEFAULT NULL COMMENT '开始时间',
+  `start_half_day` datetime DEFAULT NULL COMMENT '开始半天',
+  `end_date` datetime DEFAULT NULL COMMENT '结束时间',
+  `end_half_day` datetime DEFAULT NULL COMMENT '结束半天',
   `days` float default 0 comment '请假天数',
   `note` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_user` int(11) DEFAULT '0' COMMENT '创建人',
@@ -451,7 +453,7 @@ CREATE TABLE `ums_ask_for_day_off_log` (
 
 CREATE TABLE `ums_nature_year_annual_vacation_balance` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `employee_id` int(11) NOT null comment '员工',
+  `employee_id` varchar(255) not null comment '员工号',
   `year` int(11) NOT null comment '年份',
   `days` float default 0 comment '剩余天数',
   `note` varchar(255) DEFAULT NULL COMMENT '备注',

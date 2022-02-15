@@ -22,5 +22,5 @@ import lombok.Data;
  */
 @Data
 public class EmployeeSpecialAnnualVacationSettingQuery extends BaseQuery {
-
+    private String employeeId;
 }

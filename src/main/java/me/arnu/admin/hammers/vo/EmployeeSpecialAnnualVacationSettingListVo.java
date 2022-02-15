@@ -35,7 +35,12 @@ public class EmployeeSpecialAnnualVacationSettingListVo {
     /**
      * 员工
      */
-    private Integer employeeId;
+    private String employeeId;
+
+    /**
+     * 员工姓名
+     */
+    private String realName;
 
     /**
      * 年假基数
