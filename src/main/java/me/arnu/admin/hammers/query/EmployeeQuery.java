@@ -24,7 +24,7 @@ import lombok.Data;
 public class EmployeeQuery extends BaseQuery {
 
     /**
-     * 手机
+     * 手机, 姓名共用。
      */
     private String mobile;
 

@@ -114,11 +114,6 @@ public class Employee extends BaseEntity {
     private String address;
 
     /**
-     * 城市名
-     */
-    private String cityName;
-
-    /**
      * 入职日期
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -153,10 +148,4 @@ public class Employee extends BaseEntity {
      * 备注
      */
     private String note;
-
-    /**
-     * 排序
-     */
-    private Integer sort;
-
 }

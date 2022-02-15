@@ -11,6 +11,7 @@ package me.arnu.admin.hammers.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import me.arnu.common.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -38,13 +39,21 @@ public class LevelAnnualVacationSettingListVo {
     private Integer levelId;
 
     /**
+     * 级别
+     */
+    @Excel(name = "级别")
+    private String level;
+
+    /**
      * 年假基数
      */
+    @Excel(name = "年假天数", cellType = Excel.ColumnType.NUMERIC)
     private Integer days;
 
     /**
      * 备注
      */
+    @Excel(name = "备注")
     private String note;
 
     /**
@@ -61,7 +70,7 @@ public class LevelAnnualVacationSettingListVo {
      * 创建时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
@@ -78,7 +87,7 @@ public class LevelAnnualVacationSettingListVo {
      * 更新时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
 }

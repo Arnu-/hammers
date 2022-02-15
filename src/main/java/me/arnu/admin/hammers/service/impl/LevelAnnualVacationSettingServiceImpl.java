@@ -23,6 +23,7 @@ import me.arnu.admin.hammers.entity.LevelAnnualVacationSetting;
 import me.arnu.admin.hammers.mapper.LevelAnnualVacationSettingMapper;
 import me.arnu.admin.hammers.query.LevelAnnualVacationSettingQuery;
 import me.arnu.admin.hammers.service.ILevelAnnualVacationSettingService;
+import me.arnu.system.mapper.LevelMapper;
 import me.arnu.system.utils.UserUtils;
 import me.arnu.admin.hammers.vo.LevelAnnualVacationSettingListVo;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +47,10 @@ public class LevelAnnualVacationSettingServiceImpl extends BaseServiceImpl<Level
 
     @Autowired
     private LevelAnnualVacationSettingMapper levelAnnualVacationSettingMapper;
+    @Autowired
+    private LevelMapper levelMapper;
+
+
 
     /**
      * 获取数据列表

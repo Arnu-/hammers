@@ -154,7 +154,7 @@ public class EmployeeController extends BaseController {
     private long maxSize = 1024 * 1024 * 100;
 
     /**
-     * 导入数据表
+     * 导入数据表，打开导入页面
      *
      * @return
      */
@@ -164,16 +164,15 @@ public class EmployeeController extends BaseController {
     }
 
     /**
-     * 导出Excel
+     * 获取导入数据的模板
      *
-     * @param levelQuery 查询条件
      * @return
      */
     @ResponseBody
     @GetMapping("/importTemplateExcel")
     public JsonResult importTemplateExcel() {
         ExcelUtils<EmployeeListVo> excelUtils = new ExcelUtils<EmployeeListVo>(EmployeeListVo.class);
-        JsonResult result = excelUtils.importTemplateExcel("员工表");
+        JsonResult result = excelUtils.importTemplateExcel("员工表导入模板");
         return result;
     }
 
@@ -184,6 +183,7 @@ public class EmployeeController extends BaseController {
      */
     @RequiresPermissions("sys:employee:import")
     @Log(title = "员工", businessType = BusinessType.IMPORT)
+    @ResponseBody
     @PostMapping("/importEmp")
     public JsonResult importEmp(HttpServletRequest request) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -238,9 +238,35 @@ public class EmployeeController extends BaseController {
                         }
                     }
                 }
-                return JsonResult.success("上传成功", list);
+                return JsonResult.success("上传成功", list, list.size());
             }
         }
         return JsonResult.error("无文件");
     }
+
+    /**
+     * 批量添加，用于导入功能
+     * @param list 数据
+     * @param autoCreateDept 是否自动创建部门
+     * @param autoCreateLevel 是否自动创建级别
+     * @param autoCreatePosition 是否自动创建职位
+     * @return 成功或失败
+     */
+    @RequiresPermissions("sys:employee:add")
+    @Log(title = "员工", businessType = BusinessType.INSERT)
+    @ResponseBody
+    @PostMapping("/addBatch")
+    public JsonResult addBatch(@RequestBody List<EmployeeListVo> list
+            , Boolean autoCreateDept
+            , Boolean autoCreateLevel
+            , Boolean autoCreatePosition) {
+        autoCreateDept = autoCreateDept != null && autoCreateDept;
+        autoCreateLevel = autoCreateLevel != null && autoCreateLevel;
+        autoCreatePosition = autoCreatePosition != null && autoCreatePosition;
+        return employeeService.addBatch(list
+                , autoCreateDept
+                , autoCreateLevel
+                , autoCreatePosition);
+    }
+
 }

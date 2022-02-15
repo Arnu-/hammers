@@ -23,15 +23,24 @@ import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.admin.hammers.query.EmployeeQuery;
 import me.arnu.admin.hammers.service.IEmployeeService;
+import me.arnu.system.entity.Dept;
+import me.arnu.system.entity.Level;
+import me.arnu.system.entity.Position;
+import me.arnu.system.mapper.DeptMapper;
+import me.arnu.system.mapper.LevelMapper;
+import me.arnu.system.mapper.PositionMapper;
 import me.arnu.system.utils.UserUtils;
 import me.arnu.admin.hammers.vo.EmployeeListVo;
+import org.apache.commons.collections.Bag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,6 +56,15 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
     @Autowired
     private EmployeeMapper employeeMapper;
 
+    @Autowired
+    private DeptMapper detpMapper;
+
+    @Autowired
+    private LevelMapper levelMapper;
+
+    @Autowired
+    private PositionMapper positionMapper;
+
     /**
      * 获取数据列表
      *
@@ -60,6 +78,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
         // 手机
         if (!StringUtils.isEmpty(employeeQuery.getMobile())) {
+            queryWrapper.like("real_name", employeeQuery.getMobile());
             queryWrapper.like("mobile", employeeQuery.getMobile());
         }
         queryWrapper.eq("mark", 1);
@@ -67,14 +86,18 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
 
         // 查询数据
         IPage<Employee> page = new Page<>(employeeQuery.getPage(), employeeQuery.getLimit());
-        IPage<Employee> data = employeeMapper.selectPage(page, queryWrapper);
-        List<Employee> employeeList = data.getRecords();
-        List<EmployeeListVo> employeeListVoList = new ArrayList<>();
-        if (!employeeList.isEmpty()) {
-            employeeList.forEach(item -> {
-                EmployeeListVo employeeListVo = new EmployeeListVo();
+
+        // IPage<Employee> data = employeeMapper.selectPage(page, queryWrapper);
+        IPage<EmployeeListVo> data = employeeMapper.selectVoPage(page, employeeQuery);
+        // List<EmployeeListVo> employeeList = data.getRecords();
+        // List<EmployeeListVo> employeeListVoList = new ArrayList<>();
+        List<EmployeeListVo> employeeListVoList = data.getRecords();
+        if (!employeeListVoList.isEmpty()) {
+            employeeListVoList.forEach(item -> {
+                // EmployeeListVo employeeListVo = new EmployeeListVo();
                 // 拷贝属性
-                BeanUtils.copyProperties(item, employeeListVo);
+                // BeanUtils.copyProperties(item, employeeListVo);
+                EmployeeListVo employeeListVo = item;
                 // 头像地址
                 if (!StringUtils.isEmpty(employeeListVo.getAvatar())) {
                     employeeListVo.setAvatarUrl(CommonUtils.getImageURL(employeeListVo.getAvatar()));
@@ -87,7 +110,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                 if (employeeListVo.getUpdateUser() != null && employeeListVo.getUpdateUser() > 0) {
                     employeeListVo.setUpdateUserName(UserUtils.getName((employeeListVo.getUpdateUser())));
                 }
-                employeeListVoList.add(employeeListVo);
+                // employeeListVoList.add(employeeListVo);
             });
         }
         return JsonResult.success("操作成功", employeeListVoList, data.getTotal());
@@ -157,5 +180,144 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
             return JsonResult.error("记录状态不能为空");
         }
         return super.setStatus(entity);
+    }
+
+    /**
+     * 批量添加，用于导入功能
+     *
+     * @param list               数据
+     * @param autoCreateDept     是否自动创建部门
+     * @param autoCreateLevel    是否自动创建级别
+     * @param autoCreatePosition 是否自动创建职位
+     * @return 成功或失败
+     */
+    @Override
+    public JsonResult addBatch(List<EmployeeListVo> list
+            , boolean autoCreateDept
+            , boolean autoCreateLevel
+            , boolean autoCreatePosition) {
+        // 1、工号不可重复
+        // 2、部门不存在则创建，可选
+        // 3、级别不存在则创建，可选
+        // 4、职位不存在则创建，可选
+        // 5、自动判断性别数值
+        // 6、默认status都是正常
+        List<Dept> depts = detpMapper.selectList(new QueryWrapper<Dept>() {{
+            eq("mark", 1);
+        }});
+        Map<String, Integer> deptMap = new HashMap<>();
+        for (Dept dept : depts) {
+            deptMap.put(dept.getName(), dept.getId());
+        }
+        List<Level> levels = levelMapper.selectList(new QueryWrapper<Level>() {{
+            eq("mark", 1);
+        }});
+        Map<String, Integer> levelMap = new HashMap<>();
+        for (Level level : levels) {
+            levelMap.put(level.getName(), level.getId());
+        }
+        List<Position> positions = positionMapper.selectList(new QueryWrapper<Position>() {{
+            eq("mark", 1);
+        }});
+        Map<String, Integer> positionMap = new HashMap<>();
+        for (Position position : positions) {
+            positionMap.put(position.getName(), position.getId());
+        }
+        Map<String, Integer> genderMap = new HashMap<>();
+        genderMap.put("男", 1);
+        genderMap.put("女", 2);
+        int successCount = 0;
+        List<EmployeeListVo> badInfoList = new ArrayList<>();
+        for (EmployeeListVo vo : list) {
+            boolean skip = false;
+            // 验证员工号重复
+            Employee bemp = employeeMapper.selectOne(new QueryWrapper<Employee>() {{
+                eq("mark", 1);
+                eq("employee_id", vo.getEmployeeId());
+            }});
+            if (bemp != null) {
+                vo.setNote(vo.getNote() + "\n" + "员工号重复：" + vo.getEmployeeId());
+                skip = true;
+            }
+            Integer deptId = deptMap.getOrDefault(vo.getDept(), null);
+            if (deptId == null) {
+                if (autoCreateDept) {
+                    Dept d = new Dept();
+                    d.setName(vo.getDept())
+                            .setHasChild(1)
+                            .setSort(1)
+                            .setType(2);
+                    detpMapper.insert(d);
+                    deptId = d.getId();
+                    deptMap.put(vo.getDept(), deptId);
+                } else {
+                    vo.setNote(vo.getNote() + "\n" + "部门" + vo.getDept() + "不存在。");
+                    skip = true;
+                }
+            }
+            Integer levelId = levelMap.getOrDefault(vo.getLevel(), null);
+            if (levelId == null) {
+                if (autoCreateLevel) {
+                    Level l = new Level();
+                    l.setName(vo.getLevel())
+                            .setSort(1)
+                            .setStatus(1);
+                    levelMapper.insert(l);
+                    levelId = l.getId();
+                    levelMap.put(l.getName(), l.getId());
+                } else {
+                    vo.setNote(vo.getNote() + "\n" + "级别" + vo.getLevel() + "不存在。");
+                    skip = true;
+                }
+            }
+            Integer posId = positionMap.getOrDefault(vo.getPosition(), null);
+            if (!vo.getPosition().isEmpty()) {
+                if (posId == null) {
+                    if (autoCreatePosition) {
+                        Position p = new Position();
+                        p.setName(vo.getPosition())
+                                .setSort(1)
+                                .setStatus(1);
+                        positionMapper.insert(p);
+                        posId = p.getId();
+                        positionMap.put(p.getName(), p.getId());
+                    } else {
+                        vo.setNote(vo.getNote() + "\n" + "职位" + vo.getPosition() + "不存在。");
+                        skip = true;
+                    }
+                }
+            }
+            if (skip) {
+                badInfoList.add(vo);
+                continue;
+            }
+
+            Employee emp = new Employee()
+                    .setEmployeeId(vo.getEmployeeId())
+                    .setRealname(vo.getRealname())
+                    .setNickname(vo.getNickname())
+                    .setGender(genderMap.getOrDefault(vo.getGenderStr(), 3))
+                    .setMobile(vo.getMobile())
+                    .setEmail(vo.getEmail())
+                    .setBirthday(vo.getBirthday())
+                    .setDeptId(deptId)
+                    .setLevelId(levelId)
+                    .setPositionId(posId)
+                    .setEnrollmentDate(vo.getEnrollmentDate())
+                    .setFormalDate(vo.getFormalDate())
+                    .setLeaveDate(vo.getLeaveDate())
+                    .setNote(vo.getNote());
+            try {
+                employeeMapper.insert(emp);
+                successCount++;
+            } catch (Exception ex) {
+                vo.setNote(vo.getNote() + "\n" + ex.getMessage());
+                badInfoList.add(vo);
+            }
+        }
+        return JsonResult.success("成功写入 " + successCount
+                        + " 条数据。请通过界面备注检查未写入数据问题原因"
+                , badInfoList);
+        // return JsonResult.error("未实现功能");
     }
 }

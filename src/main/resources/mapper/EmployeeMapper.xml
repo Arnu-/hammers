@@ -2,4 +2,49 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="me.arnu.admin.hammers.mapper.EmployeeMapper">
 
+    <select id="selectVoPage" resultType="me.arnu.admin.hammers.vo.EmployeeListVo" >
+        SELECT ue.id
+            ,ue.employee_id
+            ,ue.realname
+            ,ue.nickname
+            ,case gender when 1 then '男'
+                when 2 then '女'
+                else '保密' end as genderStr
+            ,ue.avatar
+            ,ue.mobile
+            ,ue.email
+            ,ue.birthday
+            ,sd.name as dept
+            ,sl.name as level
+            ,sp.name as position
+            ,scpro.name as province
+            ,scc.name as cityName
+            ,scd.name as district
+            ,ue.address
+            ,ue.enrollment_date
+            ,ue.formal_date
+            ,ue.leave_date
+            ,ue.work_year
+            ,ue.`status`
+            ,ue.note
+            ,ue.create_user
+            ,ue.create_time
+            ,ue.update_user
+            ,ue.update_time
+        from ums_employee ue
+        left join sys_dept sd on ue.dept_id = sd.id
+        left join sys_level sl on ue.level_id = sl.id
+        left join sys_position sp on sp.id = ue.position_id
+        left join sys_city scpro on scpro.id = ue.province_id
+        left join sys_city scc on scc.id = ue.city_id
+        left join sys_city scd on scd.id = ue.city_id
+        where 1=1
+        <if test="query.mobile != null and query.mobile != ''">
+            AND (lower(ue.realname) like lower(concat('%', #{query.mobile}, '%'))
+                OR
+            lower(ue.mobile) like lower(concat('%', #{query.mobile}, '%'))
+                OR
+            lower(ue.employee_id) like lower(concat('%', #{query.mobile}, '%')))
+        </if>
+    </select>
 </mapper>
