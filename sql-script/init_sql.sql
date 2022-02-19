@@ -365,7 +365,7 @@ CREATE TABLE `sys_position` (
 
 CREATE TABLE `ums_employee` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `employee_id` NOT NULL COMMENT '员工号',
+  `employee_id` varchar(255) NOT NULL COMMENT '员工号',
   `realname` varchar(255) DEFAULT NULL COMMENT '真实姓名',
   `nickname` varchar(255) DEFAULT NULL COMMENT '昵称',
   `gender` int(11) DEFAULT NULL COMMENT '性别',
@@ -392,7 +392,8 @@ CREATE TABLE `ums_employee` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment='员工';
+) ;
+-- comment='员工';
 
 
 CREATE TABLE `ums_level_annual_vacation_setting` (
@@ -406,7 +407,8 @@ CREATE TABLE `ums_level_annual_vacation_setting` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment='级别年假基数';
+);
+-- comment='级别年假基数';
 
 CREATE TABLE `ums_employee_special_annual_vacation_setting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -419,7 +421,8 @@ CREATE TABLE `ums_employee_special_annual_vacation_setting` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment = '员工年假特殊设置';
+) ;
+-- comment = '员工年假特殊设置';
 
 CREATE TABLE `ums_day_off_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -431,7 +434,8 @@ CREATE TABLE `ums_day_off_type` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment='请假类型';
+) ;
+-- comment='请假类型';
 
 CREATE TABLE `ums_ask_for_day_off_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -449,7 +453,8 @@ CREATE TABLE `ums_ask_for_day_off_log` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment='请假记录';
+) ;
+-- comment='请假记录';
 
 CREATE TABLE `ums_nature_year_annual_vacation_balance` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -463,4 +468,49 @@ CREATE TABLE `ums_nature_year_annual_vacation_balance` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `mark` int(11) DEFAULT '1' COMMENT '有效标志',
   PRIMARY KEY (`id`)
-) comment='自然年结余天数';
+) ;
+  -- comment='自然年结余天数';
+
+
+INSERT INTO sys_menu (id,name,icon,url,param,pid,`type`,permission,status,is_public,note,sort,create_user,create_time,update_user,update_time,mark) VALUES
+	 (100,'员工','layui-icon-home','/employee/index',NULL,107,3,'sys:employee:index',1,NULL,NULL,5,1,'2022-02-12 01:14:10',1,'2022-02-12 22:09:49',1),
+	 (101,'列表',NULL,'/employee/list',NULL,100,4,'sys:employee:list',1,NULL,NULL,1,1,'2022-02-12 01:14:10',0,NULL,1),
+	 (102,'添加',NULL,'/employee/add',NULL,100,4,'sys:employee:add',1,NULL,NULL,5,1,'2022-02-12 01:14:10',0,NULL,1),
+	 (103,'修改',NULL,'/employee/update',NULL,100,4,'sys:employee:update',1,NULL,NULL,10,1,'2022-02-12 01:14:10',0,NULL,1),
+	 (104,'删除',NULL,'/employee/delete',NULL,100,4,'sys:employee:delete',1,NULL,NULL,15,1,'2022-02-12 01:14:10',0,NULL,1),
+	 (105,'批量删除',NULL,'/employee/batchDelete',NULL,100,4,'sys:employee:dall',1,NULL,NULL,25,1,'2022-02-12 01:14:10',0,NULL,1),
+	 (106,'Hammers','layui-icon-home','#','',0,1,'',1,1,'',0,1,'2022-02-12 01:28:59',0,NULL,1),
+	 (107,'基础信息','layui-icon-username','#','',106,2,'',1,1,'',0,1,'2022-02-12 01:29:37',0,NULL,1),
+	 (108,'级别年假基数','layui-icon-home','/levelannualvacationsetting/index',NULL,107,3,'sys:levelannualvacationsetting:index',1,NULL,NULL,5,1,'2022-02-12 21:43:36',1,'2022-02-12 21:48:03',1),
+	 (109,'列表',NULL,'/levelannualvacationsetting/list',NULL,108,4,'sys:levelannualvacationsetting:list',1,NULL,NULL,1,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (110,'添加',NULL,'/levelannualvacationsetting/add',NULL,108,4,'sys:levelannualvacationsetting:add',1,NULL,NULL,5,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (111,'修改',NULL,'/levelannualvacationsetting/update',NULL,108,4,'sys:levelannualvacationsetting:update',1,NULL,NULL,10,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (112,'删除',NULL,'/levelannualvacationsetting/delete',NULL,108,4,'sys:levelannualvacationsetting:delete',1,NULL,NULL,15,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (113,'批量删除',NULL,'/levelannualvacationsetting/batchDelete',NULL,108,4,'sys:levelannualvacationsetting:dall',1,NULL,NULL,25,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (114,'员工年假特殊设置','layui-icon-home','/employeespecialannualvacationsetting/index',NULL,107,3,'sys:employeespecialannualvacationsetting:index',1,NULL,NULL,5,1,'2022-02-12 21:43:36',1,'2022-02-12 21:48:03',1),
+	 (115,'列表',NULL,'/employeespecialannualvacationsetting/list',NULL,114,4,'sys:employeespecialannualvacationsetting:list',1,NULL,NULL,1,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (116,'添加',NULL,'/employeespecialannualvacationsetting/add',NULL,114,4,'sys:employeespecialannualvacationsetting:add',1,NULL,NULL,5,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (117,'修改',NULL,'/employeespecialannualvacationsetting/update',NULL,114,4,'sys:employeespecialannualvacationsetting:update',1,NULL,NULL,10,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (118,'删除',NULL,'/employeespecialannualvacationsetting/delete',NULL,114,4,'sys:employeespecialannualvacationsetting:delete',1,NULL,NULL,15,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (119,'批量删除',NULL,'/employeespecialannualvacationsetting/batchDelete',NULL,114,4,'sys:employeespecialannualvacationsetting:dall',1,NULL,NULL,25,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (120,'请假类型','layui-icon-home','/dayofftype/index',NULL,107,3,'sys:dayofftype:index',1,NULL,NULL,5,1,'2022-02-12 21:43:36',1,'2022-02-12 21:48:04',1),
+	 (121,'列表',NULL,'/dayofftype/list',NULL,120,4,'sys:dayofftype:list',1,NULL,NULL,1,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (122,'添加',NULL,'/dayofftype/add',NULL,120,4,'sys:dayofftype:add',1,NULL,NULL,5,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (123,'修改',NULL,'/dayofftype/update',NULL,120,4,'sys:dayofftype:update',1,NULL,NULL,10,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (124,'删除',NULL,'/dayofftype/delete',NULL,120,4,'sys:dayofftype:delete',1,NULL,NULL,15,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (125,'批量删除',NULL,'/dayofftype/batchDelete',NULL,120,4,'sys:dayofftype:dall',1,NULL,NULL,25,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (126,'请假记录','layui-icon-home','/askfordayofflog/index',NULL,107,3,'sys:askfordayofflog:index',1,NULL,NULL,5,1,'2022-02-12 21:43:36',1,'2022-02-12 21:48:04',1),
+	 (127,'列表',NULL,'/askfordayofflog/list',NULL,126,4,'sys:askfordayofflog:list',1,NULL,NULL,1,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (128,'添加',NULL,'/askfordayofflog/add',NULL,126,4,'sys:askfordayofflog:add',1,NULL,NULL,5,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (129,'修改',NULL,'/askfordayofflog/update',NULL,126,4,'sys:askfordayofflog:update',1,NULL,NULL,10,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (130,'删除',NULL,'/askfordayofflog/delete',NULL,126,4,'sys:askfordayofflog:delete',1,NULL,NULL,15,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (131,'批量删除',NULL,'/askfordayofflog/batchDelete',NULL,126,4,'sys:askfordayofflog:dall',1,NULL,NULL,25,1,'2022-02-12 21:43:36',0,NULL,1),
+	 (132,'请假统计','layui-icon-tabs','/dayoff/index','',107,3,'sys:dayoff',1,1,'',0,1,'2022-02-12 23:56:13',0,NULL,1),
+	 (133,'添加','layui-icon-home','/dayoff/add','',132,4,'sys:dayoff:add',1,1,'',1,1,'2022-02-12 23:58:41',0,NULL,1),
+	 (134,'列表','layui-icon-home','/dayoff/list','',132,4,'sys:dayoff:list',1,1,'',2,1,'2022-02-12 23:59:24',0,NULL,1),
+	 (135,'自然年结余天数','layui-icon-home','/natureyearannualvacationbalance/index',NULL,107,3,'sys:natureyearannualvacationbalance:index',1,NULL,NULL,5,1,'2022-02-13 11:13:10',0,NULL,1),
+	 (136,'列表',NULL,'/natureyearannualvacationbalance/list',NULL,135,4,'sys:natureyearannualvacationbalance:list',1,NULL,NULL,1,1,'2022-02-13 11:13:10',0,NULL,1),
+	 (137,'添加',NULL,'/natureyearannualvacationbalance/add',NULL,135,4,'sys:natureyearannualvacationbalance:add',1,NULL,NULL,5,1,'2022-02-13 11:13:10',0,NULL,1),
+	 (138,'修改',NULL,'/natureyearannualvacationbalance/update',NULL,135,4,'sys:natureyearannualvacationbalance:update',1,NULL,NULL,10,1,'2022-02-13 11:13:10',0,NULL,1),
+	 (139,'删除',NULL,'/natureyearannualvacationbalance/delete',NULL,135,4,'sys:natureyearannualvacationbalance:delete',1,NULL,NULL,15,1,'2022-02-13 11:13:10',0,NULL,1),
+	 (140,'批量删除',NULL,'/natureyearannualvacationbalance/batchDelete',NULL,135,4,'sys:natureyearannualvacationbalance:dall',1,NULL,NULL,25,1,'2022-02-13 11:13:10',0,NULL,1);
