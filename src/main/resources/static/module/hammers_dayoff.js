@@ -10,8 +10,14 @@ layui.use(['func'], function () {
         , $ = layui.$;
 
     if (A == 'index') {
+    func.ajaxGet("fields", {}, function (res, success) {
+        var cols = res.data;
+        func.tableIns(cols, "summaryTableList");
+            //【设置弹框】
+            func.setWin("请假类型", 500, 300);
+                            }, "处理中。。。");
         //【TABLE列数组】
-        var cols = [
+        /*var cols = [
               {type: 'checkbox', fixed: 'left'}
             , {field: 'employeeId', width: 80, title: 'ID', align: 'center', sort: true, fixed: 'left'}
             , {field: 'employeeName', width: 100, title: '姓名', align: 'center'}
@@ -33,6 +39,6 @@ layui.use(['func'], function () {
 
         //【设置弹框】
         func.setWin("请假类型", 500, 300);
-
+*/
     }
 });

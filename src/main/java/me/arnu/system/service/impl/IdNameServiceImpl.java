@@ -29,7 +29,27 @@ public class IdNameServiceImpl implements IIdNameService {
         List<LinkedHashMap> result = mapper.selectAny(sql);
         List<IdNameDto> list = new ArrayList<>();
         for (LinkedHashMap map : result) {
-            list.add(new IdNameDto(map.get("id").toString(), map.get("name").toString()));
+            String id = "";
+            String name = "";
+            if (map.containsKey("ID")) {
+                id = map.get("ID").toString();
+            } else if (map.containsKey("id")) {
+                id = map.get("id").toString();
+            } else if (map.containsKey("Id")) {
+                id = map.get("Id").toString();
+            } else {
+                continue;
+            }
+            if (map.containsKey("name")) {
+                name = map.get("name").toString();
+            } else if (map.containsKey("NAME")) {
+                name = map.get("NAME").toString();
+            } else if (map.containsKey("Name")) {
+                name = map.get("Name").toString();
+            } else {
+                continue;
+            }
+            list.add(new IdNameDto(id, name));
         }
         return list;
     }

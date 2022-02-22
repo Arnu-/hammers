@@ -21,10 +21,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +52,12 @@ public class DayOffController extends BaseController {
     @PostMapping("/list")
     public JsonResult list(DayOffTypeQuery query) {
         return dayOffService.getList(query);
+    }
+
+    @ResponseBody
+    @GetMapping("/fields")
+    public JsonResult getFields(){
+        return dayOffService.getFields();
     }
 
     /**

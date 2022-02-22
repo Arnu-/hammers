@@ -32,4 +32,9 @@ public interface IDayOffService {
 
     Map<String, Object> info(Integer id);
 
+    /**
+     * 获取需要的字段头
+     * @return
+     */
+    JsonResult getFields();
 }

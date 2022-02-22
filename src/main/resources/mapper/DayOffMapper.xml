@@ -105,15 +105,33 @@
             AND lower(ue.realname) like lower(concat('%', #{name}, '%'))
         </if>
     </select>
-    <select id="selectEmpDayOffList" resultType="java.util.Map">
+    <resultMap id="AskForDayOff" type="me.arnu.admin.hammers.entity.AskForDayOffLog">
+        <id property="id" column="id" />
+        <result property="employeeId" column="employee_id"/>
+        <result property="dayOffTypeId" column="day_off_type_id"/>
+        <result property="days" column="days"/>
+    </resultMap>
+    <select id="selectEmpAnnualDayOffList" resultMap="AskForDayOff">
         <![CDATA[
-        select employee_id , sum(days) as dayoff
+        select employee_id ,1 as day_off_type_id,  sum(days) as days
         from ums_ask_for_day_off_log uafdol
-        where
+        where mark=1 and
         day_off_type_id=1
         and start_date >= #{startDate}
         and end_date < #{endDate}
         group by employee_id
+        ]]>
+    </select>
+<!--    其他类型请假 -->
+    <select id="selectEmpOtherDayOffList" resultMap="AskForDayOff">
+        <![CDATA[
+        select employee_id ,day_off_type_id, sum(days) as days
+        from ums_ask_for_day_off_log uafdol
+        where mark = 1 and
+        day_off_type_id <> 1
+        and start_date >= #{startDate}
+        and end_date < #{endDate}
+        group by employee_id,day_off_type_id
         ]]>
     </select>
 </mapper>
