@@ -12,24 +12,21 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.arnu.admin.hammers.entity.DayOffType;
-import me.arnu.admin.hammers.entity.Employee;
-import me.arnu.admin.hammers.entity.NatureYearAnnualVacationBalance;
-import me.arnu.admin.hammers.mapper.DayOffTypeMapper;
-import me.arnu.admin.hammers.mapper.EmployeeMapper;
-import me.arnu.common.common.BaseQuery;
-import me.arnu.system.common.BaseServiceImpl;
-import me.arnu.common.config.CommonConfig;
-import me.arnu.common.utils.CommonUtils;
-import me.arnu.common.utils.JsonResult;
-import me.arnu.common.utils.StringUtils;
 import me.arnu.admin.hammers.constant.AskForDayOffLogConstant;
 import me.arnu.admin.hammers.entity.AskForDayOffLog;
+import me.arnu.admin.hammers.entity.DayOffType;
+import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.AskForDayOffLogMapper;
+import me.arnu.admin.hammers.mapper.DayOffTypeMapper;
+import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.admin.hammers.query.AskForDayOffLogQuery;
 import me.arnu.admin.hammers.service.IAskForDayOffLogService;
-import me.arnu.system.utils.UserUtils;
 import me.arnu.admin.hammers.vo.AskForDayOffLogListVo;
+import me.arnu.common.common.BaseQuery;
+import me.arnu.common.utils.JsonResult;
+import me.arnu.common.utils.StringUtils;
+import me.arnu.system.common.BaseServiceImpl;
+import me.arnu.system.utils.UserUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +49,8 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
     private AskForDayOffLogMapper askForDayOffLogMapper;
     @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired
+    private DayOffTypeMapper dayOffTypeMapper;
 
     private Map<String, String> loadEmpRealName(List<String> empIds) {
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
@@ -65,9 +64,6 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         }
         return eMap;
     }
-
-    @Autowired
-    private DayOffTypeMapper dayOffTypeMapper;
 
     private Map<Integer, String> loadDayOffType() {
         QueryWrapper<DayOffType> queryWrapper = new QueryWrapper<>();
@@ -165,6 +161,18 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         } else if (entity.getStartDate().after(entity.getEndDate())) {
             return JsonResult.error("请假日期区间格式不对！开始日期晚于结束日期");
         } else {
+            QueryWrapper<AskForDayOffLog> q = new QueryWrapper<AskForDayOffLog>();
+            q.eq("mark", 1);
+            q.eq("employee_id", entity.getEmployeeId());
+            q.eq("start_date", entity.getStartDate());
+            q.eq("start_half_day", entity.getStartHalfDay());
+            q.eq("end_date", entity.getStartDate());
+            q.eq("end_half_day", entity.getStartHalfDay());
+            AskForDayOffLog dayoffs = askForDayOffLogMapper.selectOne(q);
+            if (dayoffs != null) {
+                return JsonResult.error("请假时间重复");
+            }
+
             // 2022-02-15
             Calendar start = Calendar.getInstance();
             start.setTime(entity.getStartDate());
@@ -218,4 +226,99 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         return super.delete(entity);
     }
 
+    @Override
+    public JsonResult addBatch(List<AskForDayOffLogListVo> list, Boolean autoCreateType) {
+        // 1、请假员工、日期、不可重复
+        // 2、员工号不存在不可添加
+        // 3、请假类型不存在创建，可选
+        // 4、假定数据不会太多。逐条搞吧
+
+        QueryWrapper<DayOffType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("mark", 1);
+        queryWrapper.orderByDesc("id");
+        List<DayOffType> eList = dayOffTypeMapper.selectList(queryWrapper);
+        Map<String, Integer> eMap = new HashMap<>();
+        for (DayOffType type : eList) {
+            eMap.put(type.getName(), type.getId());
+        }
+
+        int successCount = 0;
+        List<AskForDayOffLogListVo> badInfoList = new ArrayList<>();
+        for (AskForDayOffLogListVo vo : list) {
+            boolean skip = false;
+            // 验证员工号重复
+            Employee bemp = employeeMapper.selectOne(new QueryWrapper<Employee>() {{
+                eq("mark", 1);
+                eq("employee_id", vo.getEmployeeId());
+            }});
+            if (bemp == null) {
+                vo.setNote(vo.getNote() + "\n" + "员工号不存在：" + vo.getEmployeeId());
+                skip = true;
+            }
+            if (!vo.getStartHalfDay().equals("上午")
+                    && vo.getStartHalfDay().equals("下午")) {
+                vo.setNote(vo.getNote() + "\n" + "开始半天必须是（上午，下午）" + vo.getStartHalfDay());
+                skip = true;
+            } else if (!vo.getEndHalfDay().equals("上午")
+                    && vo.getEndHalfDay().equals("下午")) {
+                vo.setNote(vo.getNote() + "\n" + "结束半天必须是（上午，下午）" + vo.getEndHalfDay());
+                skip = true;
+            }
+            /*AskForDayOffLog dayoffs = askForDayOffLogMapper.selectOne(new QueryWrapper<AskForDayOffLog>() {{
+                eq("mark", 1);
+                eq("employee_id", vo.getEmployeeId());
+                eq("start_date", vo.getStartDate());
+                eq("start_half_day", vo.getStartHalfDay());
+                eq("end_date", vo.getStartDate());
+                eq("end_half_day", vo.getStartHalfDay());
+            }});
+            if (dayoffs != null) {
+                vo.setNote(vo.getNote() + "\n" + "请假时间重复：" + vo.getEmployeeId());
+                skip = true;
+            }*/
+            Integer typeId = eMap.getOrDefault(vo.getDayOffType(), null);
+            if (typeId == null) {
+                if (autoCreateType) {
+                    DayOffType d = new DayOffType();
+                    d.setName(vo.getDayOffType())
+                            .setNote("导入时自动创建的。");
+                    dayOffTypeMapper.insert(d);
+                    typeId = d.getId();
+                    eMap.put(vo.getDayOffType(), typeId);
+                } else {
+                    vo.setNote(vo.getNote() + "\n" + "请假类型" + vo.getDayOffType() + "不存在。");
+                    skip = true;
+                }
+            }
+            if (skip) {
+                badInfoList.add(vo);
+                continue;
+            }
+            AskForDayOffLog log = new AskForDayOffLog()
+                    .setEmployeeId(vo.getEmployeeId())
+                    .setDayOffTypeId(typeId)
+                    .setStartDate(vo.getStartDate())
+                    .setStartHalfDay(vo.getStartHalfDay())
+                    .setEndDate(vo.getEndDate())
+                    .setEndHalfDay(vo.getEndHalfDay())
+                    .setNote(vo.getNote());
+
+            try {
+                JsonResult r = edit(log);
+                if (!r.getCode().equals(0)) {
+                    vo.setNote(vo.getNote() + "\n" + "错误：" + r.getMsg());
+                    badInfoList.add(vo);
+                } else {
+                    successCount++;
+                }
+            } catch (Exception ex) {
+                vo.setNote(vo.getNote() + "\n" + ex.getMessage());
+                badInfoList.add(vo);
+            }
+        }
+        return JsonResult.success("成功写入 " + successCount
+                        + " 条数据。"
+                , badInfoList);
+        // return JsonResult.error("未实现功能");
+    }
 }

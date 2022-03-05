@@ -3,12 +3,20 @@
  * @auth Arnu
  * @date 2022-02-12
  */
-layui.use(['func'], function () {
+layui.use(['func','form'], function () {
+
 
     //声明变量
     var func = layui.func
+        , form = layui.form
         , $ = layui.$;
 
+    form.verify({
+        inputFloat:[
+             /^[0-9]+(\.?[0-9]+)?$/
+             ,'请输入数字'
+        ]
+    })
     if (A == 'index') {
         //【TABLE列数组】
         var cols = [

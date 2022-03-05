@@ -10,7 +10,11 @@
 package me.arnu.admin.hammers.service;
 
 import me.arnu.admin.hammers.entity.AskForDayOffLog;
+import me.arnu.admin.hammers.vo.AskForDayOffLogListVo;
 import me.arnu.common.common.IBaseService;
+import me.arnu.common.utils.JsonResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -22,4 +26,5 @@ import me.arnu.common.common.IBaseService;
  */
 public interface IAskForDayOffLogService extends IBaseService<AskForDayOffLog> {
 
+    JsonResult addBatch(List<AskForDayOffLogListVo> list, Boolean autoCreateType);
 }

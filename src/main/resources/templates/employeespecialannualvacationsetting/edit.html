@@ -11,7 +11,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label layui-form-required">年假基数：</label>
 			<div class="layui-input-block">
-				<input name="days" th:value="${info['days']}" lay-verify="required|number" autocomplete="off" placeholder="请输入年假基数" class="layui-input" type="text">
+				<input name="days" th:value="${info['days']}" lay-verify="required|inputFloat" autocomplete="off" placeholder="请输入年假基数" class="layui-input" type="text">
 			</div>
 		</div>
 		<div class="layui-form-item">

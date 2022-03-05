@@ -17,7 +17,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label layui-form-required">剩余天数：</label>
 			<div class="layui-input-block">
-				<input name="days" th:value="${info['days']}" lay-verify="required|number" autocomplete="off" placeholder="请输入剩余天数" class="layui-input" type="text">
+				<input name="days" th:value="${info['days']}" lay-verify="required|inputFloat" autocomplete="off" placeholder="请输入剩余天数" class="layui-input" type="text" step="0.1">
 			</div>
 		</div>
 		<div class="layui-form-item">

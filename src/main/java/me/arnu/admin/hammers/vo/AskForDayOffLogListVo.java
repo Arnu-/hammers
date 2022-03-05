@@ -11,9 +11,9 @@ package me.arnu.admin.hammers.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import me.arnu.common.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -35,11 +35,13 @@ public class AskForDayOffLogListVo {
     /**
      * 员工号
      */
+    @Excel(name = "员工号")
     private String employeeId;
 
     /**
      * 真实姓名
      */
+    @Excel(name = "真实姓名")
     private String realName;
 
     /**
@@ -47,6 +49,7 @@ public class AskForDayOffLogListVo {
      */
     private Integer dayOffTypeId;
 
+    @Excel(name = "请假类型")
     private String dayOffType;
 
     /**
@@ -54,11 +57,13 @@ public class AskForDayOffLogListVo {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    @Excel(name = "开始日期")
     private Date startDate;
 
     /**
      * 开始半天，选择上午、下午
      */
+    @Excel(name = "开始上下午")
     private String startHalfDay;
 
     /**
@@ -66,21 +71,25 @@ public class AskForDayOffLogListVo {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    @Excel(name = "结束时间")
     private Date endDate;
 
     /**
      * 结束半天，选择上午、下午
      */
+    @Excel(name = "结束上下午")
     private String endHalfDay;
 
     /**
      * 请假天数
      */
+    @Excel(name = "请假天数")
     private Float days;
 
     /**
      * 备注
      */
+    @Excel(name = "备注")
     private String note;
 
     /**
