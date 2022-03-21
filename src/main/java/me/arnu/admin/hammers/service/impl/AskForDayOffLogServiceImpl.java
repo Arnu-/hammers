@@ -204,6 +204,10 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                 days = days + 0.5f;
             }
             entity.setDays(days);
+            // 需要判断请假类型，如果是年假，那么就需要判断年假是否够用，年假不够用的，就会分成两个部分：
+            // 1、年假请一部分
+            // 2、不够年假的用事假
+
         }
         return super.edit(entity);
     }
@@ -233,6 +237,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         // 3、请假类型不存在创建，可选
         // 4、假定数据不会太多。逐条搞吧
 
+        // 获取请假类型。
         QueryWrapper<DayOffType> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("mark", 1);
         queryWrapper.orderByDesc("id");
@@ -246,7 +251,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         List<AskForDayOffLogListVo> badInfoList = new ArrayList<>();
         for (AskForDayOffLogListVo vo : list) {
             boolean skip = false;
-            // 验证员工号重复
+            // 判断员工是否存在
             Employee bemp = employeeMapper.selectOne(new QueryWrapper<Employee>() {{
                 eq("mark", 1);
                 eq("employee_id", vo.getEmployeeId());
@@ -255,27 +260,17 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                 vo.setNote(vo.getNote() + "\n" + "员工号不存在：" + vo.getEmployeeId());
                 skip = true;
             }
+            // 验证半天的文字字符是不是“上午，下午”
             if (!vo.getStartHalfDay().equals("上午")
-                    && vo.getStartHalfDay().equals("下午")) {
+                    && !vo.getStartHalfDay().equals("下午")) {
                 vo.setNote(vo.getNote() + "\n" + "开始半天必须是（上午，下午）" + vo.getStartHalfDay());
                 skip = true;
             } else if (!vo.getEndHalfDay().equals("上午")
-                    && vo.getEndHalfDay().equals("下午")) {
+                    && !vo.getEndHalfDay().equals("下午")) {
                 vo.setNote(vo.getNote() + "\n" + "结束半天必须是（上午，下午）" + vo.getEndHalfDay());
                 skip = true;
             }
-            /*AskForDayOffLog dayoffs = askForDayOffLogMapper.selectOne(new QueryWrapper<AskForDayOffLog>() {{
-                eq("mark", 1);
-                eq("employee_id", vo.getEmployeeId());
-                eq("start_date", vo.getStartDate());
-                eq("start_half_day", vo.getStartHalfDay());
-                eq("end_date", vo.getStartDate());
-                eq("end_half_day", vo.getStartHalfDay());
-            }});
-            if (dayoffs != null) {
-                vo.setNote(vo.getNote() + "\n" + "请假时间重复：" + vo.getEmployeeId());
-                skip = true;
-            }*/
+            // 验证请假类型是否存在，并判断是否自动创建。
             Integer typeId = eMap.getOrDefault(vo.getDayOffType(), null);
             if (typeId == null) {
                 if (autoCreateType) {
