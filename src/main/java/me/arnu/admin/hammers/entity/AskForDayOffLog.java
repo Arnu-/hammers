@@ -9,6 +9,7 @@
 
 package me.arnu.admin.hammers.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
@@ -37,6 +38,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class AskForDayOffLog extends BaseEntity {
 
     /**
+     * 常量，上午
+     */
+    @TableField(exist = false)
+    public static final String MORNING = "上午";
+
+    /**
+     * 常量，下午
+     */
+    @TableField(exist = false)
+    public static final String AFTERNOON = "下午";
+
+    /**
      * 员工
      */
     private String employeeId;
@@ -50,7 +63,7 @@ public class AskForDayOffLog extends BaseEntity {
      * 开始日期
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date startDate;
 
     /**
@@ -62,7 +75,7 @@ public class AskForDayOffLog extends BaseEntity {
      * 结束时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endDate;
 
     /**

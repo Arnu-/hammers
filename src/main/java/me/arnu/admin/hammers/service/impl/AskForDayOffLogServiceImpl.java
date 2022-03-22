@@ -12,16 +12,21 @@ package me.arnu.admin.hammers.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.arnu.admin.hammers.config.AnnualVacationPeriodConfig;
 import me.arnu.admin.hammers.constant.AskForDayOffLogConstant;
 import me.arnu.admin.hammers.entity.AskForDayOffLog;
 import me.arnu.admin.hammers.entity.DayOffType;
 import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.AskForDayOffLogMapper;
+import me.arnu.admin.hammers.mapper.DayOffMapper;
 import me.arnu.admin.hammers.mapper.DayOffTypeMapper;
 import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.admin.hammers.query.AskForDayOffLogQuery;
+import me.arnu.admin.hammers.query.DayOffTypeQuery;
 import me.arnu.admin.hammers.service.IAskForDayOffLogService;
+import me.arnu.admin.hammers.utils.DayOffUtil;
 import me.arnu.admin.hammers.vo.AskForDayOffLogListVo;
+import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.common.utils.JsonResult;
 import me.arnu.common.utils.StringUtils;
@@ -51,6 +56,9 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
     private EmployeeMapper employeeMapper;
     @Autowired
     private DayOffTypeMapper dayOffTypeMapper;
+
+    @Autowired
+    private DayOffMapper dayOffMapper;
 
     private Map<String, String> loadEmpRealName(List<String> empIds) {
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
@@ -204,12 +212,174 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                 days = days + 0.5f;
             }
             entity.setDays(days);
-            // 需要判断请假类型，如果是年假，那么就需要判断年假是否够用，年假不够用的，就会分成两个部分：
-            // 1、年假请一部分
-            // 2、不够年假的用事假
+            if (entity.getDayOffTypeId().equals(DayOffType.ANNUAL_VACATION)) {
+                // 需要判断请假类型，如果是年假，那么就需要判断年假是否够用，年假不够用的，就会分成两个部分：
+                // 1、年假请一部分
+                // 2、不够年假的用事假
+                // todo：思考：假期余额，类似金额，要考虑是否够用，还有有效期问题，可以形成一套处理思路
+                // 2.1 算出上年结余，进行扣除。
+                // 2.2 算出今年剩余，进行扣除。
+                // 2.3 还不够，就转事假。
+                // todo：虽然现在还不考虑性能问题。但是这里的确会可能有性能问题出现。涉及到这种操作如何处理性能与准确。
+                // 获取年假额度
+                DayOffTypeQuery query = new DayOffTypeQuery();
+                query.setEmpId(entity.getEmployeeId());
 
+                List<EmployeeDayOffSummaryVo> empSummaryList = dayOffMapper.selectEmpAnnualVacationInfo(query);
+                EmployeeDayOffSummaryVo theVo = null;
+                for (EmployeeDayOffSummaryVo vo : empSummaryList) {
+                    if (vo.getEmployeeId().equals(entity.getEmployeeId())) {
+                        theVo = vo;
+                        break;
+                    }
+                }
+                if (theVo == null) {
+                    return JsonResult.error("未找到员工的年假信息：" + entity.getEmployeeId());
+                }
+
+                // 获取上半年请了多少年假
+                AskForDayOffLog firstH = getFirstHalfYearDayOff(entity.getEmployeeId());
+                // 获取下半年请了多少年假
+                AskForDayOffLog secondH = null;
+                Calendar c = Calendar.getInstance();
+                Date now = c.getTime();
+                // 如果日期已经超过了上年年假有效期，那就要计算后续部分
+                if (c.get(Calendar.MONTH) > AnnualVacationPeriodConfig.endMonth ||
+                        (c.get(Calendar.MONTH) == AnnualVacationPeriodConfig.endMonth
+                                && c.get(Calendar.DATE) > AnnualVacationPeriodConfig.endDate)) {
+
+                    secondH = getSecondHalfYearDayOff(entity.getEmployeeId());
+                }
+                DayOffUtil.calcAnnualVacation(theVo, firstH == null ? 0 : firstH.getDays()
+                        , secondH == null ? 0 : secondH.getDays()
+                        , now, AnnualVacationPeriodConfig.AnnualVEnd());
+                // 到这里，算出了一个员工的已有年假信息、剩余年假信息等。
+                // 下面开始计算请年假是否够用。由于上一步已经把上年剩余过期状况判断了，这里直接计算就可以。
+                double allBalance = theVo.getLastYearRemainAnnualVacationDays() + theVo.getThisYearRemainAnnualVacationDays();
+                if (allBalance <= 0) {
+                    // 没有年假了。
+                    // 直接转事假
+                    entity.setDayOffTypeId(DayOffType.PERSONAL_LEAVE);
+                    entity.setNote(entity.getNote() + "\n年假已不足，自动将请假转为事假。");
+                } else {
+                    if (entity.getDays() > allBalance) {
+                        // 请年假超出了可用的年假
+                        // 通过年假天数和请假开始时间对应出请假结束时间
+                        AskForDayOffLog newlog = calcEndDate(entity, allBalance);
+                        if (newlog == null) {
+                            return JsonResult.error("年假不足无法请假");
+                        }
+                        AskForDayOffLog aLog = new AskForDayOffLog();
+                        BeanUtils.copyProperties(entity, aLog);
+                        aLog.setEndHalfDay(newlog.getEndHalfDay())
+                                .setEndDate(newlog.getEndDate())
+                                .setDays((float) allBalance)
+                                .setNote(aLog.getNote() + "\n年假已不足，只能使用：" + allBalance + "天。");
+
+                        AskForDayOffLog bLog = new AskForDayOffLog();
+                        BeanUtils.copyProperties(entity, bLog);
+                        bLog.setStartDate(newlog.getStartDate())
+                                .setStartHalfDay(newlog.getStartHalfDay())
+                                .setDays((float) (entity.getDays() - allBalance))
+                                .setDayOffTypeId(DayOffType.PERSONAL_LEAVE)
+                                .setNote(bLog.getNote() + "\n年假已不足，自动将请假转为事假。");
+
+                        JsonResult ar = super.edit(aLog);
+                        if(!ar.getCode().equals(JsonResult.SUCCESS_CODE)){
+                            return ar;
+                        }
+                        JsonResult br = super.edit(bLog);
+                        return br;
+                    }
+                }
+            }
         }
         return super.edit(entity);
+    }
+
+    private AskForDayOffLog calcEndDate(AskForDayOffLog log, double days) {
+        if (days <= 0) {
+            return null;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(log.getStartDate());
+        // 搞个整数：
+        long tDays = Math.round(days * 10d);
+        long mod = tDays % 10;
+        String endHalfD = "";
+        Date endDate;
+        // 下一段的开始
+        String nextStartHalfD = "";
+        Date nextStartDate;
+        // 日位移：
+
+        if (log.getStartHalfDay().equals(AskForDayOffLog.MORNING)) {
+            if (mod == 0) {
+                endHalfD = AskForDayOffLog.AFTERNOON;
+                nextStartHalfD = AskForDayOffLog.MORNING;
+            } else {
+                endHalfD = AskForDayOffLog.MORNING;
+                nextStartHalfD = AskForDayOffLog.AFTERNOON;
+            }
+            int dayoffset = Math.toIntExact((tDays - 5) / 10);
+            c.add(Calendar.DATE, dayoffset);
+            endDate = c.getTime();
+            c.add(Calendar.DATE, -dayoffset);
+            dayoffset = Math.toIntExact(tDays / 10);
+            c.add(Calendar.DATE, dayoffset);
+            nextStartDate = c.getTime();
+        } else {
+            if (mod > 0) {
+                endHalfD = AskForDayOffLog.MORNING;
+                nextStartHalfD = AskForDayOffLog.AFTERNOON;
+            } else {
+                endHalfD = AskForDayOffLog.AFTERNOON;
+                nextStartHalfD = AskForDayOffLog.MORNING;
+            }
+            int dayoffset = Math.toIntExact(tDays / 10);
+            c.add(Calendar.DATE, dayoffset);
+            endDate = c.getTime();
+            c.add(Calendar.DATE, -dayoffset);
+            dayoffset = Math.toIntExact((tDays + 5) / 10);
+            c.add(Calendar.DATE, dayoffset);
+            nextStartDate = c.getTime();
+        }
+        AskForDayOffLog newlog = new AskForDayOffLog();
+        newlog.setStartDate(nextStartDate)
+                .setStartHalfDay(nextStartHalfD)
+                .setEndDate(endDate)
+                .setEndHalfDay(endHalfD);
+        return newlog;
+    }
+
+    public AskForDayOffLog getSecondHalfYearDayOff(String empId) {
+        // 取出分割后日期
+        Date startDate = AnnualVacationPeriodConfig.AnnualVEnd();
+        Date endDate = AnnualVacationPeriodConfig.getEndDateOfYear();
+        List<AskForDayOffLog> l = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, Collections.singletonList(empId));
+        for (AskForDayOffLog log : l) {
+            if (log.getEmployeeId().equals(empId)) {
+                return log;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 取前半部分年假请假
+     *
+     * @return AskForDayOffLog
+     */
+    public AskForDayOffLog getFirstHalfYearDayOff(String empId) {
+        Date startDate = AnnualVacationPeriodConfig.getFirstDateOfYear();
+        Date endDate = AnnualVacationPeriodConfig.AnnualVEnd();
+        List<AskForDayOffLog> l = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, Collections.singletonList(empId));
+        for (AskForDayOffLog log : l) {
+            if (log.getEmployeeId().equals(empId)) {
+                return log;
+            }
+        }
+        return null;
     }
 
     /**
@@ -261,12 +431,12 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                 skip = true;
             }
             // 验证半天的文字字符是不是“上午，下午”
-            if (!vo.getStartHalfDay().equals("上午")
-                    && !vo.getStartHalfDay().equals("下午")) {
+            if (!vo.getStartHalfDay().equals(AskForDayOffLog.MORNING)
+                    && !vo.getStartHalfDay().equals(AskForDayOffLog.AFTERNOON)) {
                 vo.setNote(vo.getNote() + "\n" + "开始半天必须是（上午，下午）" + vo.getStartHalfDay());
                 skip = true;
-            } else if (!vo.getEndHalfDay().equals("上午")
-                    && !vo.getEndHalfDay().equals("下午")) {
+            } else if (!vo.getEndHalfDay().equals(AskForDayOffLog.MORNING)
+                    && !vo.getEndHalfDay().equals(AskForDayOffLog.AFTERNOON)) {
                 vo.setNote(vo.getNote() + "\n" + "结束半天必须是（上午，下午）" + vo.getEndHalfDay());
                 skip = true;
             }

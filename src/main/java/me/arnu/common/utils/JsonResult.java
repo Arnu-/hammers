@@ -20,6 +20,7 @@ import java.io.Serializable;
  * @date 2019/11/28
  */
 public class JsonResult implements Serializable {
+    public static final Integer SUCCESS_CODE = 0;
     // 错误码
     private Integer code = 0;
 

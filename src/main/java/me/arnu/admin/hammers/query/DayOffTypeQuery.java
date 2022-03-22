@@ -28,4 +28,8 @@ public class DayOffTypeQuery extends BaseQuery {
      */
     private String name;
 
+    /**
+     * 员工号
+     */
+    private String empId;
 }

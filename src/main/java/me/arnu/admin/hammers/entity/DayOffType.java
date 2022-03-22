@@ -37,6 +37,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class DayOffType extends BaseEntity {
 
     /**
+     * 默认年假类型
+     */
+    public static final Integer ANNUAL_VACATION = 1;
+
+    /**
+     * 默认事假类型
+     */
+    public static final Integer PERSONAL_LEAVE = 2;
+
+    /**
      * 类型名称
      */
     private String name;

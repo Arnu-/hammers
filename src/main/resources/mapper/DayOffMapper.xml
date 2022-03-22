@@ -88,25 +88,30 @@
         */
         private Map<String, Float> dayOffMap;-->
     </resultMap>
-    <select id="selectEmpAnnualVacationInfo" parameterType="me.arnu.admin.hammers.query.DayOffTypeQuery" resultMap="SummaryInfoVo">
+    <select id="selectEmpAnnualVacationInfo" parameterType="me.arnu.admin.hammers.query.DayOffTypeQuery"
+            resultMap="SummaryInfoVo">
         select ue.id, ue.employee_id, ue.realname,sd.name as dept
         , sl.name as `level`
         , ue.work_year
-        , case when  uesavs.days is not null then uesavs.days else ulavs.days end as annualVacationDays
+        , case when uesavs.days is not null then uesavs.days else ulavs.days end as annualVacationDays
         , case when unyavb.days is null then 0 else unyavb.days end as lastYearAnnualVacationBalance
         from ums_employee ue
-        left join sys_level sl  on ue.level_id = sl.id
+        left join sys_level sl on ue.level_id = sl.id
         left join sys_dept sd on ue.dept_id = sd.id
         left join ums_level_annual_vacation_setting ulavs on ue.level_id = ulavs .level_id
         left join ums_employee_special_annual_vacation_setting uesavs on uesavs.employee_id = ue.employee_id
-        left join ums_nature_year_annual_vacation_balance unyavb on unyavb.employee_id = ue.employee_id and unyavb.`year` = (year(now())-1)
+        left join ums_nature_year_annual_vacation_balance unyavb on unyavb.employee_id = ue.employee_id and
+        unyavb.`year` = (year(now())-1)
         where 1=1
         <if test="name != null and name != ''">
             AND lower(ue.realname) like lower(concat('%', #{name}, '%'))
         </if>
+        <if test="empId != null and empId != ''">
+            AND lower(ue.employee_id) like lower(concat('%', #{empId}, '%'))
+        </if>
     </select>
     <resultMap id="AskForDayOff" type="me.arnu.admin.hammers.entity.AskForDayOffLog">
-        <id property="id" column="id" />
+        <id property="id" column="id"/>
         <result property="employeeId" column="employee_id"/>
         <result property="dayOffTypeId" column="day_off_type_id"/>
         <result property="days" column="days"/>
@@ -119,10 +124,18 @@
         day_off_type_id=1
         and start_date >= #{startDate}
         and end_date < #{endDate}
+        ]]>
+        <if test="empIds != null and empIds.size() > 0">
+            and employee_id in
+            <foreach collection="empIds" item="empId" open="(" separator="," close=")">
+                #{empId}
+            </foreach>
+        </if>
+        <![CDATA[
         group by employee_id
         ]]>
     </select>
-<!--    其他类型请假 -->
+    <!--    其他类型请假 -->
     <select id="selectEmpOtherDayOffList" resultMap="AskForDayOff">
         <![CDATA[
         select employee_id ,day_off_type_id, sum(days) as days
@@ -131,6 +144,14 @@
         day_off_type_id <> 1
         and start_date >= #{startDate}
         and end_date < #{endDate}
+        ]]>
+        <if test="empIds != null and empIds.size() > 0">
+            and employee_id in
+            <foreach collection="empIds" item="empId" open="(" separator="," close=")">
+                #{empId}
+            </foreach>
+        </if>
+        <![CDATA[
         group by employee_id,day_off_type_id
         ]]>
     </select>
