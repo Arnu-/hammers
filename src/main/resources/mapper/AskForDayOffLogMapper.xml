@@ -2,4 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="me.arnu.admin.hammers.mapper.AskForDayOffLogMapper">
 
+    <select id="selectVoPage" resultType="me.arnu.admin.hammers.vo.AskForDayOffLogListVo">
+        SELECT al.id
+        ,al.employee_id
+        ,ue.realname
+        ,dot.name as dayOffType
+        ,al.start_date
+        ,al.start_half_day
+        ,al.end_date
+        ,al.end_half_day
+        ,al.days
+        ,al.create_user
+        ,al.create_time
+        ,al.update_user
+        ,al.update_time
+        from ums_ask_for_day_off_log al
+        join ums_employee ue on al.employee_id=ue.employee_id
+        join ums_day_off_type dot on al.day_off_type_id=dot.id
+        where al.mark=1
+        <if test="query.employeeId != null and query.employeeId != ''">
+            AND (lower(ue.realname) like lower(concat('%', #{query.employeeId}, '%'))
+            OR
+            lower(al.employee_id) like lower(concat('%', #{query.employeeId}, '%')))
+        </if>
+        order by al.start_date desc
+    </select>
 </mapper>

@@ -94,42 +94,21 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
     @Override
     public JsonResult getList(BaseQuery query) {
         AskForDayOffLogQuery askForDayOffLogQuery = (AskForDayOffLogQuery) query;
-        // 查询条件
-        QueryWrapper<AskForDayOffLog> queryWrapper = new QueryWrapper<>();
-        // 员工号
-        if (!StringUtils.isEmpty(askForDayOffLogQuery.getEmployeeId())) {
-            queryWrapper.like("employee_id", askForDayOffLogQuery.getEmployeeId());
-        }
-        queryWrapper.eq("mark", 1);
-        queryWrapper.orderByDesc("id");
 
         // 查询数据
         IPage<AskForDayOffLog> page = new Page<>(askForDayOffLogQuery.getPage(), askForDayOffLogQuery.getLimit());
-        IPage<AskForDayOffLog> data = askForDayOffLogMapper.selectPage(page, queryWrapper);
-        List<AskForDayOffLog> askForDayOffLogList = data.getRecords();
-        List<AskForDayOffLogListVo> askForDayOffLogListVoList = new ArrayList<>();
-        if (!askForDayOffLogList.isEmpty()) {
-            List<String> empIds = new ArrayList<>();
-            for (AskForDayOffLog askForDayOffLog : askForDayOffLogList) {
-                empIds.add(askForDayOffLog.getEmployeeId());
-            }
-            Map<String, String> eMap = loadEmpRealName(empIds);
-            Map<Integer, String> tMap = loadDayOffType();
-            askForDayOffLogList.forEach(item -> {
-                AskForDayOffLogListVo askForDayOffLogListVo = new AskForDayOffLogListVo();
-                // 拷贝属性
-                BeanUtils.copyProperties(item, askForDayOffLogListVo);
-                askForDayOffLogListVo.setRealName(eMap.get(item.getEmployeeId()));
-                askForDayOffLogListVo.setDayOffType(tMap.get(item.getDayOffTypeId()));
+        IPage<AskForDayOffLogListVo> data = askForDayOffLogMapper.selectVoPage(page, askForDayOffLogQuery);
+        List<AskForDayOffLogListVo> askForDayOffLogListVoList = data.getRecords();
+        if (!askForDayOffLogListVoList.isEmpty()) {
+            askForDayOffLogListVoList.forEach(item -> {
                 // 创建人名称
-                if (askForDayOffLogListVo.getCreateUser() != null && askForDayOffLogListVo.getCreateUser() > 0) {
-                    askForDayOffLogListVo.setCreateUserName(UserUtils.getName((askForDayOffLogListVo.getCreateUser())));
+                if (item.getCreateUser() != null && item.getCreateUser() > 0) {
+                    item.setCreateUserName(UserUtils.getName((item.getCreateUser())));
                 }
                 // 更新人名称
-                if (askForDayOffLogListVo.getUpdateUser() != null && askForDayOffLogListVo.getUpdateUser() > 0) {
-                    askForDayOffLogListVo.setUpdateUserName(UserUtils.getName((askForDayOffLogListVo.getUpdateUser())));
+                if (item.getUpdateUser() != null && item.getUpdateUser() > 0) {
+                    item.setUpdateUserName(UserUtils.getName((item.getUpdateUser())));
                 }
-                askForDayOffLogListVoList.add(askForDayOffLogListVo);
             });
         }
         return JsonResult.success("操作成功", askForDayOffLogListVoList, data.getTotal());
