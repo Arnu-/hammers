@@ -6,7 +6,6 @@
 #@2021-06-10
 */
 
-
 package me.arnu.admin.hammers.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -189,33 +188,37 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * @return 成功或失败
      */
     @Override
-    public JsonResult addBatch(List<EmployeeListVo> list
-            , boolean autoCreateDept
-            , boolean autoCreateLevel
-            , boolean autoCreatePosition) {
+    public JsonResult addBatch(List<EmployeeListVo> list, boolean autoCreateDept, boolean autoCreateLevel,
+            boolean autoCreatePosition) {
         // 1、工号不可重复
         // 2、部门不存在则创建，可选
         // 3、级别不存在则创建，可选
         // 4、职位不存在则创建，可选
         // 5、自动判断性别数值
         // 6、默认status都是正常
-        List<Dept> depts = detpMapper.selectList(new QueryWrapper<Dept>() {{
-            eq("mark", 1);
-        }});
+        List<Dept> depts = detpMapper.selectList(new QueryWrapper<Dept>() {
+            {
+                eq("mark", 1);
+            }
+        });
         Map<String, Integer> deptMap = new HashMap<>();
         for (Dept dept : depts) {
             deptMap.put(dept.getName(), dept.getId());
         }
-        List<Level> levels = levelMapper.selectList(new QueryWrapper<Level>() {{
-            eq("mark", 1);
-        }});
+        List<Level> levels = levelMapper.selectList(new QueryWrapper<Level>() {
+            {
+                eq("mark", 1);
+            }
+        });
         Map<String, Integer> levelMap = new HashMap<>();
         for (Level level : levels) {
             levelMap.put(level.getName(), level.getId());
         }
-        List<Position> positions = positionMapper.selectList(new QueryWrapper<Position>() {{
-            eq("mark", 1);
-        }});
+        List<Position> positions = positionMapper.selectList(new QueryWrapper<Position>() {
+            {
+                eq("mark", 1);
+            }
+        });
         Map<String, Integer> positionMap = new HashMap<>();
         for (Position position : positions) {
             positionMap.put(position.getName(), position.getId());
@@ -228,10 +231,12 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         for (EmployeeListVo vo : list) {
             boolean skip = false;
             // 验证员工号重复
-            Employee bemp = employeeMapper.selectOne(new QueryWrapper<Employee>() {{
-                eq("mark", 1);
-                eq("employee_id", vo.getEmployeeId());
-            }});
+            Employee bemp = employeeMapper.selectOne(new QueryWrapper<Employee>() {
+                {
+                    eq("mark", 1);
+                    eq("employee_id", vo.getEmployeeId());
+                }
+            });
             if (bemp != null) {
                 vo.setNote(vo.getNote() + "\n" + "员工号重复：" + vo.getEmployeeId());
                 skip = true;
@@ -314,8 +319,33 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
             }
         }
         return JsonResult.success("成功写入 " + successCount
-                        + " 条数据。"
-                , badInfoList);
+                + " 条数据。", badInfoList);
         // return JsonResult.error("未实现功能");
+    }
+
+    @Override
+    public JsonResult setEmpLeaveDate(Employee entity) {
+        QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("employee_id", entity.getEmployeeId());
+        queryWrapper.eq("mark", "1");
+        Employee emp = employeeMapper.selectOne(queryWrapper);
+        if (null == emp) {
+            return JsonResult.error("员工“" + entity.getEmployeeId() + "”不存在。");
+        }
+        // 0、如果离职日期为空，则表示取消离职
+        if (null == entity.getLeaveDate()) {
+            entity.setId(emp.getId());
+            entity.setStatus(1);
+            employeeMapper.updateById(entity);
+            return JsonResult.success("修改成功");
+        }
+        // 1、离职日期不能早于入职日期
+        if (entity.getLeaveDate().before(emp.getEnrollmentDate())) {
+            return JsonResult.error("离职日期不能早于入职日期");
+        }
+        entity.setId(emp.getId());
+        entity.setStatus(2);
+        employeeMapper.updateById(entity);
+        return JsonResult.success("修改成功");
     }
 }

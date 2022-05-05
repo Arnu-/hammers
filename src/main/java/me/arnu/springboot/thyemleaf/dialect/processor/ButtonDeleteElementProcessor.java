@@ -71,7 +71,7 @@ public class ButtonDeleteElementProcessor extends AbstractElementTagProcessor {
 //        String tableName = iProcessableElementTag.getAttributeValue("tableName");
         StringBuffer result = new StringBuffer("<a class=\"layui-btn layui-btn-danger " +
                 "layui-btn-xs btnDel\" lay-event=\"del\" " +
-                "title=\"" + name + "\"><i class=\"layui-icon\">&#xe630;</i>" +
+                "title=\"" + name + "\"><i class=\"layui-icon layui-icon-delete\"></i>" +
                 name + "</a>");
 //        StringBuffer result = new StringBuffer("<select><option value=''>--请选择--</option></select>");
 //        if(validParamIsNotNull(id,name,colText, colVal, tableName)) {

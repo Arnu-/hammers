@@ -246,9 +246,10 @@ public class EmployeeController extends BaseController {
 
     /**
      * 批量添加，用于导入功能
-     * @param list 数据
-     * @param autoCreateDept 是否自动创建部门
-     * @param autoCreateLevel 是否自动创建级别
+     * 
+     * @param list               数据
+     * @param autoCreateDept     是否自动创建部门
+     * @param autoCreateLevel    是否自动创建级别
      * @param autoCreatePosition 是否自动创建职位
      * @return 成功或失败
      */
@@ -256,17 +257,24 @@ public class EmployeeController extends BaseController {
     @Log(title = "员工", businessType = BusinessType.INSERT)
     @ResponseBody
     @PostMapping("/addBatch")
-    public JsonResult addBatch(@RequestBody List<EmployeeListVo> list
-            , Boolean autoCreateDept
-            , Boolean autoCreateLevel
-            , Boolean autoCreatePosition) {
+    public JsonResult addBatch(@RequestBody List<EmployeeListVo> list, Boolean autoCreateDept, Boolean autoCreateLevel,
+            Boolean autoCreatePosition) {
         autoCreateDept = autoCreateDept != null && autoCreateDept;
         autoCreateLevel = autoCreateLevel != null && autoCreateLevel;
         autoCreatePosition = autoCreatePosition != null && autoCreatePosition;
-        return employeeService.addBatch(list
-                , autoCreateDept
-                , autoCreateLevel
-                , autoCreatePosition);
+        return employeeService.addBatch(list, autoCreateDept, autoCreateLevel, autoCreatePosition);
     }
 
+    /**
+     * 设置状态
+     *
+     * @param entity 实体对象
+     * @return
+     */
+    @Log(title = "员工", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    @PostMapping("/setEmpLeaveDate")
+    public JsonResult setEmpLeaveDate(@RequestBody Employee entity) {
+        return employeeService.setEmpLeaveDate(entity);
+    }
 }

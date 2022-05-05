@@ -178,7 +178,7 @@ public class EmployeeListVo {
     /**
      * 状态
      */
-    @Excel(name = "状态", readConverterExp = "1=正常,2=停用", type = Excel.Type.EXPORT)
+    @Excel(name = "状态", readConverterExp = "1=在职,2=离职", type = Excel.Type.EXPORT)
     private Integer status;
 
     /**

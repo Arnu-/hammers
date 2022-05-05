@@ -38,4 +38,11 @@ public interface IEmployeeService extends IBaseService<Employee> {
             , boolean autoCreateDept
             , boolean autoCreateLevel
             , boolean autoCreatePosition);
+
+    /**
+     * 设置离职日期
+     * @param entity
+     * @return
+     */
+    JsonResult setEmpLeaveDate(Employee entity);
 }

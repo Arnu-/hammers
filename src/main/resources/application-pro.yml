@@ -7,27 +7,15 @@ server:
   IMAGE_URL: http://images.taskwebui.com/
 
 spring:
-  h2:
-    console:
-      #可以访问h2数据库
-      enabled: true
-      #代表访问的地址   localhost:8080/h2-console  访问h2数据库
-      path: /h2-console
-      settings:
-        #防止跟踪输出
-        trace: false
-        #防止其他ip访问
-        web-allow-others: false
-
   # 配置数据源
   datasource:
     # 使用阿里的Druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
     # 填写你数据库的url、登录名、密码和数据库名
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:E:/tmp/h2db
-    username: sa
-    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.21.0.15:3306/hammers_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8&useSSL=true&tinyInt1isBit=false
+    username: hammers
+    password: hammers.mysql.5
     druid:
       # 连接池的配置信息
       # 初始连接数
