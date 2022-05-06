@@ -84,7 +84,7 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
                         '<div class="layui-inline">' +
                         '<label class="layui-form-label">离职日期：</label>' +
                         '<div class="layui-input-inline">' +
-                        ' <input type="text" class="layui-input" name="leavedate" id="leavedate" placeholder="yyyy-MM-dd">' +
+                        ' <input type="text" class="layui-input" name="leavedate" id="leavedate" placeholder="留空就是取消离职">' +
                         '</div>' +
                         '</div>' +
                         '</div>' +

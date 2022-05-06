@@ -6,6 +6,7 @@
         <result property="employeeName" column="realname"/>
         <result property="dept" column="dept"/>
         <result property="level" column="level"/>
+        <result property="enrollmentDate" column="enrollment_date"/>
         <result property="workYear" column="work_year"/>
         <result property="actuallyAnnualVacationDays" column="annualVacationDays"/>
         <result property="lastYearAnnualVacationBalance" column="lastYearAnnualVacationBalance"/>
@@ -92,6 +93,7 @@
             resultMap="SummaryInfoVo">
         select ue.id, ue.employee_id, ue.realname,sd.name as dept
         , sl.name as `level`
+        , ue.enrollment_date
         , ue.work_year
         , case when uesavs.days is not null then uesavs.days else ulavs.days end as annualVacationDays
         , case when unyavb.days is null then 0 else unyavb.days end as lastYearAnnualVacationBalance

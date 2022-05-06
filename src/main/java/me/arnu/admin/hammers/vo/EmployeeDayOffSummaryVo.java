@@ -10,10 +10,12 @@ package me.arnu.admin.hammers.vo;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
  * 员工请假统计信息
+ * 
  * @author Arnu
  */
 @Data
@@ -41,19 +43,35 @@ public class EmployeeDayOffSummaryVo {
     private String level;
 
     /**
+     * 状态 1 在职 2 离职
+     */
+    private int status;
+
+    /**
+     * 入职日期
+     */
+    private Date enrollmentDate;
+
+    /**
+     * 离职日期
+     */
+    private Date leaveDate;
+
+
+    /**
      * 工龄
      */
-    private double workYear;
+    private float workYear;
 
-//    /**
-//     * 级别对应年假天数
-//     */
-//    private double levelAnnualVacationDays;
-//
-//    /**
-//     * 特殊年假天数
-//     */
-//    private double employeeSpecialAnnualVacationDays;
+    // /**
+    // * 级别对应年假天数
+    // */
+    // private double levelAnnualVacationDays;
+    //
+    // /**
+    // * 特殊年假天数
+    // */
+    // private double employeeSpecialAnnualVacationDays;
 
     /**
      * 实际本年年假天数
@@ -66,20 +84,20 @@ public class EmployeeDayOffSummaryVo {
      * 所以跨年后需要缓存起来上年剩余年假天数。
      */
     private double lastYearAnnualVacationBalance;
-    
+
     /**
-     * 截至目前可用年假天数  上年年假剩余+本年年假合计减去已请年假天数
+     * 截至目前可用年假天数 上年年假剩余+本年年假合计减去已请年假天数
      * 计算原则：如果当前在重叠计算年假周期，那么两个部分的年假都算在一起，优先使用上一年结余
      *
      *
      */
     private double allAnnualVacationDays;
 
-//    /**
-//     * 本年剩余年假天数，即总数减请假数
-//     */
-//    private double thisYearRemainAnnualVacationDays;
-//
+    // /**
+    // * 本年剩余年假天数，即总数减请假数
+    // */
+    // private double thisYearRemainAnnualVacationDays;
+    //
     /**
      * 到达新一年后，截至结算周期结束前，上一周期剩余年假天数
      * 这里已经减去了新年的请假天数
@@ -91,11 +109,11 @@ public class EmployeeDayOffSummaryVo {
      * 这里已经减去了当年的请假天数
      */
     private double thisYearRemainAnnualVacationDays;
-//
-//    /**
-//     * 进入自然年新年后，依然可以使用上已计算周期年假的请假天数
-//     */
-//    private double lastPeriodAnnualVacationDayOffDays;
+    //
+    // /**
+    // * 进入自然年新年后，依然可以使用上已计算周期年假的请假天数
+    // */
+    // private double lastPeriodAnnualVacationDayOffDays;
 
     /**
      * 可用上年年假的请假天数

@@ -72,7 +72,7 @@ public class ButtonDeleteElementProcessor extends AbstractElementTagProcessor {
         StringBuffer result = new StringBuffer("<a class=\"layui-btn layui-btn-danger " +
                 "layui-btn-xs btnDel\" lay-event=\"del\" " +
                 "title=\"" + name + "\"><i class=\"layui-icon layui-icon-delete\"></i>" +
-                name + "</a>");
+                "</a>");
 //        StringBuffer result = new StringBuffer("<select><option value=''>--请选择--</option></select>");
 //        if(validParamIsNotNull(id,name,colText, colVal, tableName)) {
 //            //最终拼接的sql语句，这里可以使用jdbc来查询

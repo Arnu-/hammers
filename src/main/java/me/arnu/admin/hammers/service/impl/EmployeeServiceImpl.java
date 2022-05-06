@@ -9,16 +9,19 @@
 package me.arnu.admin.hammers.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.EmployeeMapper;
 import me.arnu.admin.hammers.query.EmployeeQuery;
 import me.arnu.admin.hammers.service.IEmployeeService;
+import me.arnu.admin.hammers.utils.DayOffUtil;
 import me.arnu.admin.hammers.vo.EmployeeListVo;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.common.config.CommonConfig;
 import me.arnu.common.utils.CommonUtils;
+import me.arnu.common.utils.DateUtils;
 import me.arnu.common.utils.JsonResult;
 import me.arnu.common.utils.StringUtils;
 import me.arnu.system.common.BaseServiceImpl;
@@ -28,6 +31,7 @@ import me.arnu.system.entity.Position;
 import me.arnu.system.mapper.DeptMapper;
 import me.arnu.system.mapper.LevelMapper;
 import me.arnu.system.mapper.PositionMapper;
+import me.arnu.system.utils.ShiroUtils;
 import me.arnu.system.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,6 +94,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         List<EmployeeListVo> employeeListVoList = data.getRecords();
         if (!employeeListVoList.isEmpty()) {
             employeeListVoList.forEach(item -> {
+                item.setWorkYear(DayOffUtil.calcWorkYearToThisYearEnd(item.getEnrollmentDate()));
                 // EmployeeListVo employeeListVo = new EmployeeListVo();
                 // 拷贝属性
                 // BeanUtils.copyProperties(item, employeeListVo);
@@ -332,20 +337,26 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         if (null == emp) {
             return JsonResult.error("员工“" + entity.getEmployeeId() + "”不存在。");
         }
+
+        UpdateWrapper<Employee> uw = new UpdateWrapper<>();
+        uw.eq("id", emp.getId());
+        uw.set("update_user", ShiroUtils.getUserId());
+        uw.set("update_time", DateUtils.now());
+
         // 0、如果离职日期为空，则表示取消离职
         if (null == entity.getLeaveDate()) {
-            entity.setId(emp.getId());
-            entity.setStatus(1);
-            employeeMapper.updateById(entity);
+            uw.set("status", 1);
+            uw.set("leave_date", null);
+            employeeMapper.update(null,uw);
             return JsonResult.success("修改成功");
         }
         // 1、离职日期不能早于入职日期
         if (entity.getLeaveDate().before(emp.getEnrollmentDate())) {
             return JsonResult.error("离职日期不能早于入职日期");
         }
-        entity.setId(emp.getId());
-        entity.setStatus(2);
-        employeeMapper.updateById(entity);
+        uw.set("status", 2);
+        uw.set("leave_date", entity.getLeaveDate());
+        employeeMapper.update(null,uw);
         return JsonResult.success("修改成功");
     }
 }

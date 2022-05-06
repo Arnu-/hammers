@@ -4,61 +4,33 @@
 		<input name="id" type="hidden" th:value="${info['id']}?:0">
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">头像：</label>
+				<label class="layui-form-label">头像</label>
 				<widget:uploadSingleImage name="avatar|头像|90x90|employee|建议上传尺寸450x450" th:value="${info['avatar']}"/>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">真实姓名：</label>
+				<label class="layui-form-label layui-form-required">姓名</label>
 				<div class="layui-input-inline">
 					<input name="realname" th:value="${info['realname']}" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" type="text">
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">昵称：</label>
-				<div class="layui-input-inline">
-					<input name="nickname" th:value="${info['nickname']}" autocomplete="off" placeholder="请输入昵称" class="layui-input" type="text">
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">性别：</label>
+				<label class="layui-form-label layui-form-required">性别</label>
 				<div class="layui-input-inline">
 					<widget:singleSelect name="gender|1|性别|name|id" th:data="${USER_GENDER_LIST}" th:value="${info['gender']}?:3"/>
 				</div>
 			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">手机号码：</label>
-				<div class="layui-input-inline">
-					<input name="mobile" th:value="${info['mobile']}"  placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
-				</div>
-			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">电子邮箱：</label>
-				<div class="layui-input-inline">
-					<input name="email" th:value="${info['email']}"  placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">生日：</label>
-				<div class="layui-input-inline">
-					<widget:dateSelect name="birthday|生日|datetime" th:value="${info['birthday']}"/>
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">部门：</label>
+				<label class="layui-form-label layui-form-required">部门</label>
 				<div class="layui-input-inline">
 					<widget:singleSelect name="deptId|0|部门|name|id" sql="SELECT id,`name` FROM sys_dept WHERE pid=0 AND mark=1 ORDER BY sort ASC;" th:value="${info['deptId']}?:0"/>
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">级别：</label>
+				<label class="layui-form-label layui-form-required">级别</label>
 				<div class="layui-input-inline">
 					<widget:singleSelect name="levelId|1|职级|name|id" sql="SELECT id,`name` FROM sys_level WHERE `status`=1 AND mark=1;" th:value="${info['levelId']}?:0"/>
 				</div>
@@ -66,21 +38,79 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">职位：</label>
+				<label class="layui-form-label layui-form-required">员工号</label>
 				<div class="layui-input-inline">
-					<widget:singleSelect name="positionId|0|职位|name|id" sql="SELECT id,`name` FROM sys_position WHERE `status`=1 AND mark=1;" th:value="${info['positionId']}?:0"/>
+					<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required" placeholder="请输入员工号" autocomplete="off" class="layui-input" type="text">
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">员工号：</label>
+				<label class="layui-form-label layui-form-required">状态</label>
 				<div class="layui-input-inline">
-					<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required" placeholder="请输入员工号" autocomplete="off" class="layui-input" type="text">
+					
+					<widget:singleSelect name="status|1|状态|name|id" data="{1=在职, 2=离职}" th:value="${info['status']}?:0"/>
+					<!-- <input name="status" th:value="${info['status']}" lay-verify="required|number" autocomplete="off" placeholder="请输入状态" class="layui-input" type="text"> -->
 				</div>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">所属城市：</label>
+				<label class="layui-form-label layui-form-required">入职日期</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="enrollmentDate|入职日期|date|1" th:value="${info['enrollmentDate']}"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">转正日期</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="formalDate|转正日期|date" th:value="${info['formalDate']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">职位</label>
+				<div class="layui-input-inline">
+					<widget:singleSelect name="positionId|0|职位|name|id" sql="SELECT id,`name` FROM sys_position WHERE `status`=1 AND mark=1;" th:value="${info['positionId']}?:0"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">离职日期</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="leaveDate|离职日期|date" th:value="${info['leaveDate']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">昵称</label>
+				<div class="layui-input-inline">
+					<input name="nickname" th:value="${info['nickname']}" autocomplete="off" placeholder="请输入昵称" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">手机号码</label>
+				<div class="layui-input-inline">
+					<input name="mobile" th:value="${info['mobile']}"  placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">电子邮箱</label>
+				<div class="layui-input-inline">
+					<input name="email" th:value="${info['email']}"  placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">生日</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="birthday|生日|date" th:value="${info['birthday']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">所属城市</label>
 				<div class="layui-input-inline">
 					<widget:citySingleSelect th:value="${info['districtId']} ?: 0" limit="3"/>
 				</div>
@@ -88,46 +118,17 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="">
-				<label class="layui-form-label">地址：</label>
+				<label class="layui-form-label">地址</label>
 				<div class="layui-input-block">
 					<input name="address" th:value="${info['address']}" autocomplete="off" placeholder="请输入地址" class="layui-input" type="text">
 				</div>
 			</div>
 		</div>
+		<!-- <div class="layui-form-item">
+			
+		</div> -->
 		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">入职日期：</label>
-				<div class="layui-input-inline">
-					<widget:dateSelect name="enrollmentDate|入职日期|datetime" th:value="${info['enrollmentDate']}"/>
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">转正日期：</label>
-				<div class="layui-input-inline">
-					<widget:dateSelect name="formalDate|转正日期|datetime" th:value="${info['formalDate']}"/>
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">离职日期：</label>
-				<div class="layui-input-inline">
-					<widget:dateSelect name="leaveDate|离职日期|datetime" th:value="${info['leaveDate']}"/>
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label layui-form-required">状态：</label>
-				<div class="layui-input-inline">
-					
-					<widget:singleSelect name="status|1|状态|name|id" data="{1=在职, 2=离职}" th:value="${info['level']}?:0"/>
-					<!-- <input name="status" th:value="${info['status']}" lay-verify="required|number" autocomplete="off" placeholder="请输入状态" class="layui-input" type="text"> -->
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label">备注：</label>
+			<label class="layui-form-label">备注</label>
 			<div class="layui-input-block">
 				<textarea name="note" placeholder="请输入备注" class="layui-textarea" th:text="${info['note']}"></textarea>
 			</div>

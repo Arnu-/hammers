@@ -67,4 +67,4 @@ system:
   # 系统简称
   nickName: 任务管理系统
   # 系统版本号
-  version: v0.0.2
+  version: v0.0.3

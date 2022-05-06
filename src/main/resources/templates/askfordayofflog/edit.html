@@ -20,19 +20,19 @@
 			<div class="layui-inline">
 				<label class="layui-form-label layui-form-required">开始日期：</label>
 				<div class="layui-input-inline">
-					<widget:dateSelect name="startDate|开始日期|datetime" th:value="${info['startTime']}"/>
+					<widget:dateSelect name="startDate|开始日期|date|1" th:value="${info['startDate']}"/>
 				</div>
 				<div class="layui-input-inline">
-					<widget:singleSelect name="startHalfDay|1|上下午|name|id" data="{上午=上午,下午=下午}" value="0"/>
+					<widget:singleSelect name="startHalfDay|1|上下午|name|id" data="{上午=上午,下午=下午}" th:value="${info['startHalfDay']}"/>
 				</div>
 			</div>
 			<div class="layui-inline">
 				<label class="layui-form-label layui-form-required">结束日期：</label>
 				<div class="layui-input-inline">
-					<widget:dateSelect name="endDate|结束日期|datetime" th:value="${info['endTime']}"/>
+					<widget:dateSelect name="endDate|结束日期|date|1" th:value="${info['endDate']}"/>
 				</div>
 				<div class="layui-input-inline">
-				    <widget:singleSelect name="endHalfDay|1|上下午|name|id" data="{上午=上午,下午=下午}" value="0"/>
+				    <widget:singleSelect name="endHalfDay|1|上下午|name|id" data="{上午=上午,下午=下午}" th:value="${info['endHalfDay']}"/>
 			    </div>
 			</div>
 		</div>

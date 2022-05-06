@@ -47,24 +47,34 @@ public class DateSelectElementProcessor extends AbstractElementTagProcessor {
 
 //        //select的name属性
         String name = iProcessableElementTag.getAttributeValue("name");
-        // birthday|出生日期|date
+        // birthday|出生日期|date|1
         String[] vs = name.split("\\|");
         String eleName = vs[0];
         String cnName = vs[1];
         String type = vs[2];
+        String range="";
         String value = "";
+        String require = "";
+        if(vs.length>3 && "1".equals(vs[3])){
+            require = "lay-verify=\"date\"";
+        }
         if (iProcessableElementTag.hasAttribute("value")) {
             value = iProcessableElementTag.getAttributeValue("value");
         }
-        String result = "<input name=\"#ELENAME#\" id=\"#ELENAME#\" value=\"#VALUE#\" lay-verify=\"#TYPE#\" placeholder=\"请选择#CNNAME#\" autocomplete=\"off\" class=\"layui-input date-icon\" type=\"text\"><script th:inline=\"javascript\" type=\"text/javascript\">layui.use(['func'], function () {\n" +
+        String result = "<input name=\"#ELENAME#\" id=\"#ELENAME#\" " +
+                " #REQUIRE# placeholder=\"请选择#CNNAME#\" autocomplete=\"off\" " +
+                " class=\"layui-input date-icon\" type=\"text\"><script th:inline=\"javascript\" " +
+                " type=\"text/javascript\">layui.use(['func'], function () {\n" +
                 "    var func = layui.func;\n" +
-                "        func.initDate(['#ELENAME#|#TYPE#||'], function (value, date) {\n" +
+                "        func.initDate(['#ELENAME#|#TYPE#|#RANGE#||#VALUE#'], function (value, d) {\n" +
                 "            console.log(\"当前选择日期:\" + value);\n" +
-                "            console.log(\"日期详细信息：\" + JSON.stringify(date));\n" +
+                "            console.log(\"日期详细信息：\" + JSON.stringify(d));\n" +
                 "        });});</script>";
         result = result.replaceAll("#ELENAME#", eleName)
                 .replaceAll("#CNNAME#", cnName)
                 .replaceAll("#TYPE#", type)
+                .replaceAll("#RANGE#", range)
+                .replaceAll("#REQUIRE#", require)
                 .replaceAll("#VALUE#", value);
 
         // 创建将替换自定义标签的 DOM 结构

@@ -38,7 +38,7 @@
         left join sys_city scpro on scpro.id = ue.province_id
         left join sys_city scc on scc.id = ue.city_id
         left join sys_city scd on scd.id = ue.city_id
-        where 1=1
+        where ue.mark=1
         <if test="query.mobile != null and query.mobile != ''">
             AND (lower(ue.realname) like lower(concat('%', #{query.mobile}, '%'))
                 OR

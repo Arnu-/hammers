@@ -20,9 +20,9 @@ public class SelectIdNameSingleElementProcessor extends SelectIdNameElementProce
     @Override
     protected String START_STR() {
         return "<select name='" + ELE_NAME +
-                "' id='" + ELE_ID +
+                "' id='" + ELE_ID + "' " + 
                 REQUIRED +
-                "' lay-search='' lay-filter='" + ELE_NAME +
+                " lay-search='' lay-filter='" + ELE_NAME +
                 "'><option value=''>【请选择" + CN_NAME +
                 "】</option>";
     }
