@@ -20,32 +20,14 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
             { type: 'checkbox', fixed: 'left' }
             , { field: 'id', width: 80, title: 'ID', align: 'center', sort: true, fixed: 'left' }
             , { field: 'employeeId', width: 100, title: '员工号', align: 'center' }
-            , { field: 'realname', width: 100, title: '真实姓名', align: 'center' }
-            , { field: 'nickname', width: 100, title: '昵称', align: 'center' }
+            , { field: 'realname', width: 100, title: '姓名', align: 'center' }
             , { field: 'genderStr', width: 100, title: '性别', align: 'center' }
-            , {
-                field: 'avatar', width: 100, title: '头像', align: 'center', templet: function (d) {
-                    var avatarStr = "";
-                    if (d.avatarUrl) {
-                        avatarStr = '<a href="' + d.avatarUrl + '" target="_blank"><img src="' + d.avatarUrl + '" height="26" /></a>';
-                    }
-                    return avatarStr;
-                }
-            }
-            , { field: 'mobile', width: 100, title: '手机', align: 'center' }
-            , { field: 'email', width: 100, title: '邮箱', align: 'center' }
-            , { field: 'birthday', width: 180, title: '生日', align: 'center' }
             , { field: 'dept', width: 100, title: '部门', align: 'center' }
-            , { field: 'level', width: 100, title: '级别', align: 'center' }
+            , { field: 'level', width: 80, title: '级别', align: 'center' }
             , { field: 'position', width: 100, title: '职位', align: 'center' }
-            , { field: 'province', width: 100, title: '省', align: 'center' }
-            , { field: 'cityName', width: 100, title: '市', align: 'center' }
-            , { field: 'district', width: 100, title: '区/县', align: 'center' }
-            , { field: 'address', width: 100, title: '地址', align: 'center' }
-            , { field: 'enrollmentDate', width: 180, title: '入职日期', align: 'center' }
-            , { field: 'formalDate', width: 180, title: '转正日期', align: 'center' }
-            , { field: 'leaveDate', width: 180, title: '离职日期', align: 'center' }
             , { field: 'workYear', width: 100, title: '工龄', align: 'center' }
+            , { field: 'enrollmentDate', width: 120, title: '入职日期', align: 'center' }
+            , { field: 'formalDate', width: 120, title: '转正日期', align: 'center' }
             , {
                 field: 'status', width: 100, title: '状态', align: 'center', templet(d) {
                     var cls = "";
@@ -66,6 +48,24 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
                     return '<span class="layui-btn ' + cls + ' layui-btn-xs">' + statusN + '</span>';
                 }
             }
+            , { field: 'leaveDate', width: 120, title: '离职日期', align: 'center' }
+            , { field: 'nickname', width: 100, title: '昵称', align: 'center' }
+            , {
+                field: 'avatar', width: 100, title: '头像', align: 'center', templet: function (d) {
+                    var avatarStr = "";
+                    if (d.avatarUrl) {
+                        avatarStr = '<a href="' + d.avatarUrl + '" target="_blank"><img src="' + d.avatarUrl + '" height="26" /></a>';
+                    }
+                    return avatarStr;
+                }
+            }
+            , { field: 'mobile', width: 100, title: '手机', align: 'center' }
+            , { field: 'email', width: 100, title: '邮箱', align: 'center' }
+            , { field: 'birthday', width: 120, title: '生日', align: 'center' }
+            , { field: 'province', width: 100, title: '省', align: 'center' }
+            , { field: 'cityName', width: 100, title: '市', align: 'center' }
+            , { field: 'district', width: 100, title: '区/县', align: 'center' }
+            , { field: 'address', width: 100, title: '地址', align: 'center' }
             , { field: 'note', width: 100, title: '备注', align: 'center' }
             , { field: 'createUserName', width: 100, title: '创建人', align: 'center' }
             , { field: 'createTime', width: 180, title: '创建时间', align: 'center' }
@@ -91,7 +91,8 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
                         '</form>',
                     success: function (layero, dIndex) {
                         laydate.render({
-                            elem: '#leavedate' //指定元素
+                            elem: '#leavedate',
+                            value: data.leaveDate
                         });
                         // 超出一定高度滚动
                         // $(layero).children('.layui-layer-content').css({'max-height': '300px', 'overflow': 'auto'});
