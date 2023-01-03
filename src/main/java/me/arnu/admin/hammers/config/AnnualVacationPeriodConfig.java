@@ -28,11 +28,15 @@ public class AnnualVacationPeriodConfig {
     public static int endMonth = Calendar.MARCH;
     public static int endDate = 31;
 
-    public static Date AnnualVEnd(){
+    /**
+     * 上年的年假最后有效期
+     *
+     * @return 上年的年假最后有效期
+     */
+    public static Date AnnualVEnd(int year) {
         Calendar c = Calendar.getInstance();
         // 停用上年年假的日期
-        c.set(Calendar.MONTH, AnnualVacationPeriodConfig.endMonth);
-        c.set(Calendar.DATE, AnnualVacationPeriodConfig.endDate);
+        c.set(year, AnnualVacationPeriodConfig.endMonth, AnnualVacationPeriodConfig.endDate, 0, 0, 0);
 
         // 无论是计算结束还是计算开始，都要它+1天
         c.add(Calendar.DATE, 1);
@@ -40,36 +44,27 @@ public class AnnualVacationPeriodConfig {
     }
 
 
-    public static Date getFirstDateOfYear() {
+    /**
+     * 取出年的开始日期
+     *
+     * @return 指定年的元旦
+     */
+    public static Date getFirstDateOfYear(int year) {
         // 暂时先认为以自然年作为开始。就只用取出结束时间
         Calendar c = Calendar.getInstance();
-
-        // 如下代码的作用是将日期时间改为：1月1日0时0分0秒0毫秒
-        c.set(Calendar.MONTH, Calendar.JANUARY);
-        c.set(Calendar.DATE, 1);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
+        c.set(year, Calendar.JANUARY, 1, 0, 0, 0);
         return c.getTime();
     }
 
     /**
      * 实际上获取的时明年的元旦
-     * @return
+     *
+     * @return 指定年的第二年的元旦
      */
-    public static Date getEndDateOfYear() {
+    public static Date getEndDateOfYear(int year) {
         // 暂时先认为以自然年作为开始。就只用取出结束时间
         Calendar c = Calendar.getInstance();
-
-        // 如下代码的作用是将日期时间改为：1月1日0时0分0秒0毫秒
-        c.set(Calendar.MONTH, Calendar.JANUARY);
-        c.set(Calendar.DATE, 1);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        c.add(Calendar.YEAR, 1);
+        c.set(year + 1, Calendar.JANUARY, 1, 0, 0, 0);
         return c.getTime();
     }
 

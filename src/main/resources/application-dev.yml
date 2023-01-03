@@ -13,8 +13,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/hammers_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8&useSSL=true&tinyInt1isBit=false
-    username: hammers_dba
-    password: hammers_dba_123
+    username: hammer
+    password: hammer
 
     # 填写你数据库的url、登录名、密码和数据库名
     #driver-class-name: org.h2.Driver

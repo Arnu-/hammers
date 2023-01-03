@@ -6,9 +6,11 @@
         <result property="employeeName" column="realname"/>
         <result property="dept" column="dept"/>
         <result property="level" column="level"/>
+        <result property="graduationDate" column="graduation_date"/>
         <result property="enrollmentDate" column="enrollment_date"/>
+        <result property="formalDate" column="formal_date"/>
         <result property="workYear" column="work_year"/>
-        <result property="actuallyAnnualVacationDays" column="annualVacationDays"/>
+        <result property="actualAnnualVacationDays" column="annualVacationDays"/>
         <result property="lastYearAnnualVacationBalance" column="lastYearAnnualVacationBalance"/>
 
         <!--/**
@@ -49,7 +51,7 @@
         /**
         * 实际本年年假天数
         */
-        private float actuallyAnnualVacationDays;
+        private float actualAnnualVacationDays;
 
         //    /**
         //     * 上年剩余年假天数，即到达新年1月后，上一年年假还剩下几天
@@ -93,7 +95,9 @@
             resultMap="SummaryInfoVo">
         select ue.id, ue.employee_id, ue.realname,sd.name as dept
         , sl.name as `level`
+        , ue.graduation_date
         , ue.enrollment_date
+        , ue.formal_date
         , ue.work_year
         , case when uesavs.days is not null then uesavs.days else ulavs.days end as annualVacationDays
         , case when unyavb.days is null then 0 else unyavb.days end as lastYearAnnualVacationBalance
@@ -103,10 +107,19 @@
         left join ums_level_annual_vacation_setting ulavs on ue.level_id = ulavs .level_id
         left join ums_employee_special_annual_vacation_setting uesavs on uesavs.employee_id = ue.employee_id
         left join ums_nature_year_annual_vacation_balance unyavb on unyavb.employee_id = ue.employee_id and
-        unyavb.`year` = (year(now())-1)
+        <choose>
+            <when test="year != null and year != 0">
+                unyavb.`year` = (#{year}-1)
+            </when>
+            <otherwise>
+                unyavb.`year` = (year(now())-1)
+            </otherwise>
+        </choose>
         where 1=1
-        <if test="name != null and name != ''">
-            AND lower(ue.realname) like lower(concat('%', #{name}, '%'))
+        <if test="name != null and name != ''"><!-- name 做模糊查询，empid做精准查询 -->
+            AND ( lower(ue.realname) like lower(concat('%', #{name}, '%'))
+            OR
+            lower(ue.employee_id) like lower(concat('%', #{name}, '%')))
         </if>
         <if test="empId != null and empId != ''">
             AND lower(ue.employee_id) like lower(concat('%', #{empId}, '%'))
@@ -118,6 +131,7 @@
         <result property="dayOffTypeId" column="day_off_type_id"/>
         <result property="days" column="days"/>
     </resultMap>
+
     <select id="selectEmpAnnualDayOffList" resultMap="AskForDayOff">
         <![CDATA[
         select employee_id ,1 as day_off_type_id,  sum(days) as days

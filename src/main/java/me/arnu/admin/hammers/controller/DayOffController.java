@@ -55,6 +55,22 @@ public class DayOffController extends BaseController {
     }
 
     @ResponseBody
+    @PostMapping("/annualDetail")
+    public JsonResult annualDetail(DayOffTypeQuery query) {
+        return dayOffService.annualDetail(query);
+    }
+
+    /**
+     * 导入数据表，打开导入页面
+     *
+     * @return
+     */
+    @GetMapping("/annualDetail")
+    public String annualDetail() {
+        return this.render();
+    }
+
+    @ResponseBody
     @GetMapping("/fields")
     public JsonResult getFields(){
         return dayOffService.getFields();

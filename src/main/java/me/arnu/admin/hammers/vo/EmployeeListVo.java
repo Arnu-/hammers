@@ -144,6 +144,13 @@ public class EmployeeListVo {
     @Excel(name = "地址", type = Excel.Type.EXPORT)
     private String address;
 
+    /**
+     * 入职日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @Excel(name = "毕业日期")
+    private Date graduationDate;
 
     /**
      * 入职日期

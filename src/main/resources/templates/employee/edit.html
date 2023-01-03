@@ -115,6 +115,12 @@
 					<widget:citySingleSelect th:value="${info['districtId']} ?: 0" limit="3"/>
 				</div>
 			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">入职日期</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="graduationDate|毕业日期|date|0" th:value="${info['graduationDate']}"/>
+				</div>
+			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="">

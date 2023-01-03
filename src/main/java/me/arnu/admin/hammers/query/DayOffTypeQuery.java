@@ -15,6 +15,7 @@ import lombok.Data;
 /**
  * <p>
  * 请假类型查询条件
+ * name 做模糊查询，empid做精准查询
  * </p>
  *
  * @author Arnu
@@ -32,4 +33,9 @@ public class DayOffTypeQuery extends BaseQuery {
      * 员工号
      */
     private String empId;
+
+    /**
+     * 要查询的年
+     */
+    private int year;
 }

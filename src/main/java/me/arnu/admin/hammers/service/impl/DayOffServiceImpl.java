@@ -22,6 +22,7 @@ import me.arnu.admin.hammers.utils.DayOffUtil;
 import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
 import me.arnu.admin.hammers.vo.LayuiTableColumnVo;
 import me.arnu.common.utils.JsonResult;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class DayOffServiceImpl implements IDayOffService {
     private static final List<String> fields = Arrays.asList(
             "id", "employeeId", "employeeName",
             "dept", "level", "workYear",
-            "actuallyAnnualVacationDays",
+            "actualAnnualVacationDays",
             "lastYearAnnualVacationBalance",
             "allAnnualVacationDays",
             "lastYearRemainAnnualVacationDays",
@@ -57,10 +58,76 @@ public class DayOffServiceImpl implements IDayOffService {
             "annualVacationDayOffDays");
 
     /**
+     * 查询某个员工的年假计算明细
+     *
+     * @param query
+     * @return
+     */
+    @Override
+    public JsonResult annualDetail(DayOffTypeQuery query) {
+        if (null == query.getName() || "".equals(query.getName())) {
+            return JsonResult.success();
+        }
+        List<EmployeeDayOffSummaryVo> empSummaryList = dayOffMapper.selectEmpAnnualVacationInfo(query);
+        if (empSummaryList.size() == 0) {
+            return JsonResult.success();
+        }
+        int year = query.getYear();
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        if (year == 0) {
+            // 不输入年，就是计算今年。
+            year = c.get(Calendar.YEAR);
+        } else {
+            c.set(Calendar.YEAR, year);
+        }
+        List<Map<String, String>> result = new ArrayList<>();
+        EmployeeDayOffSummaryVo vo = empSummaryList.get(0);
+        result.add(mapResult("姓名", vo.getEmployeeName(), "员工姓名"));
+        result.add(mapResult("毕业日期", vo.getGraduationDate(), "员工毕业日期"));
+        result.add(mapResult("入职日期", vo.getEnrollmentDate(), "员工入职日期"));
+        result.add(mapResult("转正日期", vo.getFormalDate(), "员工转正日期"));
+        result.add(mapResult("离职日期", vo.getLeaveDate(), "员工离职日期"));
+        result.add(mapResult("年假基数", vo.getActualAnnualVacationDays(), "员工年假基数"));
+
+        int r = DayOffUtil.thisYearAnnualVacationDays(vo, c.getTime());
+        result.add(mapResult("计算结果", r, "年假计算结果"));
+
+
+        return JsonResult.success("成功", result);
+    }
+
+    private Map<String, String> mapResult(String field, Object value, String describe) {
+        Map<String, String> v = new HashMap<>();
+        v.put("field", field);
+        if (value instanceof String) {
+            v.put("value", (String) value);
+        } else if (value instanceof Date) {
+            FastDateFormat f = FastDateFormat.getInstance("yyyy-MM-dd");
+            v.put("value", f.format((Date) value));
+        } else if (null == value) {
+            v.put("value", "");
+        } else {
+            v.put("value", String.valueOf(value));
+        }
+        v.put("describe", describe);
+        return v;
+    }
+
+    /**
      * 这个地方获取请假的一系列相关信息，输出每个员工的
      */
     @Override
     public JsonResult getList(DayOffTypeQuery query) {
+        int year = query.getYear();
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        if (year == 0) {
+            // 不输入年，就是计算今年。
+            year = c.get(Calendar.YEAR);
+        } else {
+            c.set(Calendar.YEAR, year);
+        }
 
         // 1. 取出员工信息
         // 2. 取出员工年假设定
@@ -69,32 +136,71 @@ public class DayOffServiceImpl implements IDayOffService {
 
         // 4. 取出今年已请年假，两部分，1、重叠期，2、独立期
         // 暂时先认为以自然年作为开始。就只用取出结束时间
+        Map<String, Double> firstDayOffMap = getFirstHalfYearDayOff(year);
+        Map<String, Double> secondDayOffMap = getSecondHalfYearDayOff(year);
 
-        Map<String, Double> firstDayOffMap = getFirstHalfYearDayOff();
-        Map<String, Double> secondDayOffMap = null;
+        // 取出除了年假之外的请假统计
+        Map<Integer, Map<String, Double>> typeDayOffMap = getOtherDayOffStat(year);
 
-        Calendar c = Calendar.getInstance();
-        Date now = c.getTime();
-        // 如果日期已经超过了上年年假有效期，那就要计算后续部分
-        if (c.get(Calendar.MONTH) > AnnualVacationPeriodConfig.endMonth ||
-                (c.get(Calendar.MONTH) == AnnualVacationPeriodConfig.endMonth
-                        && c.get(Calendar.DATE) > AnnualVacationPeriodConfig.endDate)) {
+//        Map<Integer, EmployeeDayOffSummaryVo> summaryVoMap = new HashMap<>();
+//        for (EmployeeDayOffSummaryVo vo : empSummaryList) {
+//            summaryVoMap.put(vo.getEmployeeId(), vo);
+//        }
 
-            secondDayOffMap = getSecondHalfYearDayOff();
+        // 保存计算结果
+        List<JSONObject> jsonList = new ArrayList<>();
+        // 取出上年的年假最后有效期
+        Date endOfAnnualVExpire = AnnualVacationPeriodConfig.AnnualVEnd(year);
+
+        // 5. 计算出实际剩余年假
+        for (EmployeeDayOffSummaryVo vo : empSummaryList) {
+            // 5.1 取出对应人的请假状态
+            // 5.2 根据请假前、后半年设定来计算
+            // 5.3 去年残留还有就先扣去年，去年没有就开始扣今年。
+            String empId = vo.getEmployeeId();
+            double firstDayOff = firstDayOffMap.getOrDefault(empId, 0d);
+            double secondDayOff = secondDayOffMap == null ? 0d :
+                    secondDayOffMap.getOrDefault(empId, 0d);
+            DayOffUtil.calcAnnualVacationV2(vo, firstDayOff, secondDayOff, c.getTime(), endOfAnnualVExpire);
+            JSONObject jobj = (JSONObject) JSONObject.toJSON(vo);
+            // 放不同类型的请假数据
+            for (Map.Entry<Integer, Map<String, Double>> dayOffMapE : typeDayOffMap.entrySet()) {
+                int k = dayOffMapE.getKey();
+                String type = "type_" + k;
+                jobj.put(type, dayOffMapE.getValue().getOrDefault(vo.getEmployeeId(), 0d));
+            }
+            jsonList.add(jobj);
         }
+        return JsonResult.success("ok", jsonList);
+    }
 
+    /**
+     * 取出除了年假之外的其他类型的请假的统计
+     *
+     * @param year 指定的哪年的数据
+     * @return 返回所有员工的请假统计
+     */
+    private Map<Integer, Map<String, Double>> getOtherDayOffStat(int year) {
+        // 取出请假类型id不等于1，有效=1，也就是请假类型不是年假的其他类型。
+        // 用于其他类型假期的计算。
         List<DayOffType> list = dayOffTypeMapper.selectList(new QueryWrapper<DayOffType>() {{
             ne("id", 1);
             eq("mark", 1);
         }});
+        // 不同类型的请假的所有员工请假统计
         Map<Integer, Map<String, Double>> typeDayOffMap = new HashMap<>();
         for (DayOffType type : list) {
             typeDayOffMap.put(type.getId(), new HashMap<>());
         }
-        Date yearFirstDay = AnnualVacationPeriodConfig.getFirstDateOfYear();
-        Date yearEndDay = AnnualVacationPeriodConfig.getEndDateOfYear();
+
+        // 取出年的开始日期
+        Date yearFirstDay = AnnualVacationPeriodConfig.getFirstDateOfYear(year);
+        // 取出年的结束日期
+        Date yearEndDay = AnnualVacationPeriodConfig.getEndDateOfYear(year);
+        // 取出其他类型的请假详情
         List<AskForDayOffLog> otherTypeDayOffList = dayOffMapper.selectEmpOtherDayOffList(yearFirstDay, yearEndDay, null);
 
+        // 得出员工号与请假的对应关系
         for (AskForDayOffLog map : otherTypeDayOffList) {
             String empId = map.getEmployeeId();
             Integer typeId = map.getDayOffTypeId();
@@ -108,41 +214,13 @@ public class DayOffServiceImpl implements IDayOffService {
                 dmap.put(empId, (double) dayoffs);
             }
         }
-//        Map<Integer, EmployeeDayOffSummaryVo> summaryVoMap = new HashMap<>();
-//        for (EmployeeDayOffSummaryVo vo : empSummaryList) {
-//            summaryVoMap.put(vo.getEmployeeId(), vo);
-//        }
-
-
-        List<JSONObject> jsonList = new ArrayList<>();
-        Date endOfAnnualVExpire = AnnualVacationPeriodConfig.AnnualVEnd();
-
-        // 5. 计算出实际剩余年假
-        for (EmployeeDayOffSummaryVo vo : empSummaryList) {
-            // 5.1 取出对应人的请假状态
-            // 5.2 根据请假前、后半年设定来计算
-            // 5.3 去年残留还有就先扣去年，去年没有就开始扣今年。
-            String empId = vo.getEmployeeId();
-            double firstDayOff = firstDayOffMap.getOrDefault(empId, 0d);
-            double secondDayOff = secondDayOffMap == null ? 0d :
-                    secondDayOffMap.getOrDefault(empId, 0d);
-            DayOffUtil.calcAnnualVacation(vo, firstDayOff, secondDayOff, now, endOfAnnualVExpire);
-            JSONObject jobj = (JSONObject) JSONObject.toJSON(vo);
-            // 放不同类型的请假数据
-            for (Map.Entry<Integer, Map<String, Double>> dayOffMapE : typeDayOffMap.entrySet()) {
-                int k = dayOffMapE.getKey();
-                String type = "type_" + k;
-                jobj.put(type, dayOffMapE.getValue().getOrDefault(vo.getEmployeeId(), 0d));
-            }
-            jsonList.add(jobj);
-        }
-        return JsonResult.success("ok", jsonList);
+        return typeDayOffMap;
     }
 
-    public Map<String, Double> getSecondHalfYearDayOff() {
+    public Map<String, Double> getSecondHalfYearDayOff(int year) {
         // 取出分割后日期
-        Date startDate = AnnualVacationPeriodConfig.AnnualVEnd();
-        Date endDate = AnnualVacationPeriodConfig.getEndDateOfYear();
+        Date startDate = AnnualVacationPeriodConfig.AnnualVEnd(year);
+        Date endDate = AnnualVacationPeriodConfig.getEndDateOfYear(year);
 
         List<AskForDayOffLog> empDayOffSecondHalfList = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, null);
         Map<String, Double> secondDayOffMap = new HashMap<>();
@@ -157,9 +235,9 @@ public class DayOffServiceImpl implements IDayOffService {
      *
      * @return
      */
-    public Map<String, Double> getFirstHalfYearDayOff() {
-        Date startDate = AnnualVacationPeriodConfig.getFirstDateOfYear();
-        Date endDate = AnnualVacationPeriodConfig.AnnualVEnd();
+    public Map<String, Double> getFirstHalfYearDayOff(int year) {
+        Date startDate = AnnualVacationPeriodConfig.getFirstDateOfYear(year);
+        Date endDate = AnnualVacationPeriodConfig.AnnualVEnd(year);
         List<AskForDayOffLog> firstList = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, null);
 
         Map<String, Double> firstDayOffMap = new HashMap<>();
@@ -180,9 +258,9 @@ public class DayOffServiceImpl implements IDayOffService {
         fields.add(new LayuiTableColumnVo("employeeName", 100, "姓名", "center", "left"));
         fields.add(new LayuiTableColumnVo("dept", 120, "部门", "center", ""));
         fields.add(new LayuiTableColumnVo("level", 120, "级别", "center", ""));
-        fields.add(new LayuiTableColumnVo("workYear", 100, "工龄", "center", ""));
+        // fields.add(new LayuiTableColumnVo("workYear", 100, "工龄", "center", ""));
         fields.add(new LayuiTableColumnVo("lastYearAnnualVacationBalance", 100, "去年结余年假", "center", ""));
-        fields.add(new LayuiTableColumnVo("actuallyAnnualVacationDays", 100, "今年年假额度", "center", ""));
+        fields.add(new LayuiTableColumnVo("actualAnnualVacationDays", 100, "今年年假额度", "center", ""));
         fields.add(new LayuiTableColumnVo("lastYearRemainAnnualVacationDays", 100, "去年可用年假剩余", "center", ""));
         fields.add(new LayuiTableColumnVo("thisYearRemainAnnualVacationDays", 100, "今年可用年假剩余", "center", ""));
         fields.add(new LayuiTableColumnVo("firstAnnualVacationDayOffDays", 100, "3月31日前请的年假", "center", ""));

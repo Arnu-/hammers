@@ -37,4 +37,11 @@ public interface IDayOffService {
      * @return
      */
     JsonResult getFields();
+
+    /**
+     * 查询某个员工的年假计算明细
+     * @param query
+     * @return
+     */
+    JsonResult annualDetail(DayOffTypeQuery query);
 }

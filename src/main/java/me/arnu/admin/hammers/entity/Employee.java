@@ -114,6 +114,13 @@ public class Employee extends BaseEntity {
     private String address;
 
     /**
+     * 毕业日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    private Date graduationDate;
+
+    /**
      * 入职日期
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")

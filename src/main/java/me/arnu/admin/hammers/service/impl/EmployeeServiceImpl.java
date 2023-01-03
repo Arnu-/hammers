@@ -311,6 +311,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                     .setLevelId(levelId)
                     .setPositionId(posId)
                     .setWorkYear(vo.getWorkYear())
+                    .setGraduationDate(vo.getGraduationDate())
                     .setEnrollmentDate(vo.getEnrollmentDate())
                     .setFormalDate(vo.getFormalDate())
                     .setLeaveDate(vo.getLeaveDate())

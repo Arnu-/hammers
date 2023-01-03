@@ -216,22 +216,22 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                     return JsonResult.error("未找到员工的年假信息：" + entity.getEmployeeId());
                 }
 
-                // 获取上半年请了多少年假
-                AskForDayOffLog firstH = getFirstHalfYearDayOff(entity.getEmployeeId());
-                // 获取下半年请了多少年假
-                AskForDayOffLog secondH = null;
                 Calendar c = Calendar.getInstance();
                 Date now = c.getTime();
+                // 获取上半年请了多少年假
+                AskForDayOffLog firstH = getFirstHalfYearDayOff(entity.getEmployeeId(), c.get(Calendar.YEAR));
+                // 获取下半年请了多少年假
+                AskForDayOffLog secondH = null;
                 // 如果日期已经超过了上年年假有效期，那就要计算后续部分
                 if (c.get(Calendar.MONTH) > AnnualVacationPeriodConfig.endMonth ||
                         (c.get(Calendar.MONTH) == AnnualVacationPeriodConfig.endMonth
                                 && c.get(Calendar.DATE) > AnnualVacationPeriodConfig.endDate)) {
 
-                    secondH = getSecondHalfYearDayOff(entity.getEmployeeId());
+                    secondH = getSecondHalfYearDayOff(entity.getEmployeeId(), c.get(Calendar.YEAR));
                 }
-                DayOffUtil.calcAnnualVacation(theVo, firstH == null ? 0 : firstH.getDays()
+                DayOffUtil.calcAnnualVacationV2(theVo, firstH == null ? 0 : firstH.getDays()
                         , secondH == null ? 0 : secondH.getDays()
-                        , now, AnnualVacationPeriodConfig.AnnualVEnd());
+                        , now, AnnualVacationPeriodConfig.AnnualVEnd(c.get(Calendar.YEAR)));
                 // 到这里，算出了一个员工的已有年假信息、剩余年假信息等。
                 // 下面开始计算请年假是否够用。由于上一步已经把上年剩余过期状况判断了，这里直接计算就可以。
                 double allBalance = theVo.getLastYearRemainAnnualVacationDays() + theVo.getThisYearRemainAnnualVacationDays();
@@ -264,7 +264,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                                 .setNote(bLog.getNote() + "\n年假已不足，自动将请假转为事假。");
 
                         JsonResult ar = super.edit(aLog);
-                        if(!ar.getCode().equals(JsonResult.SUCCESS_CODE)){
+                        if (!ar.getCode().equals(JsonResult.SUCCESS_CODE)) {
                             return ar;
                         }
                         JsonResult br = super.edit(bLog);
@@ -331,10 +331,10 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         return newlog;
     }
 
-    public AskForDayOffLog getSecondHalfYearDayOff(String empId) {
+    public AskForDayOffLog getSecondHalfYearDayOff(String empId, int year) {
         // 取出分割后日期
-        Date startDate = AnnualVacationPeriodConfig.AnnualVEnd();
-        Date endDate = AnnualVacationPeriodConfig.getEndDateOfYear();
+        Date startDate = AnnualVacationPeriodConfig.AnnualVEnd(year);
+        Date endDate = AnnualVacationPeriodConfig.getEndDateOfYear(year);
         List<AskForDayOffLog> l = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, Collections.singletonList(empId));
         for (AskForDayOffLog log : l) {
             if (log.getEmployeeId().equals(empId)) {
@@ -349,9 +349,9 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
      *
      * @return AskForDayOffLog
      */
-    public AskForDayOffLog getFirstHalfYearDayOff(String empId) {
-        Date startDate = AnnualVacationPeriodConfig.getFirstDateOfYear();
-        Date endDate = AnnualVacationPeriodConfig.AnnualVEnd();
+    public AskForDayOffLog getFirstHalfYearDayOff(String empId, int year) {
+        Date startDate = AnnualVacationPeriodConfig.getFirstDateOfYear(year);
+        Date endDate = AnnualVacationPeriodConfig.AnnualVEnd(year);
         List<AskForDayOffLog> l = dayOffMapper.selectEmpAnnualDayOffList(startDate, endDate, Collections.singletonList(empId));
         for (AskForDayOffLog log : l) {
             if (log.getEmployeeId().equals(empId)) {
