@@ -4,7 +4,7 @@ server:
   #  servlet:
   #    # 项目的前缀名
   #    context-path: /hammers
-  IMAGE_URL: http://43.138.51.135/
+  IMAGE_URL: http://43.138.51.135:9010/
 
 spring:
   # 配置数据源
