@@ -145,6 +145,12 @@ public class EmployeeListVo {
     private String address;
 
     /**
+     * 学历
+     */
+    @Excel(name = "学历")
+    private String education;
+
+    /**
      * 入职日期
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -187,6 +193,7 @@ public class EmployeeListVo {
      */
     @Excel(name = "状态", readConverterExp = "1=在职,2=离职", type = Excel.Type.EXPORT)
     private Integer status;
+
 
     /**
      * 备注

@@ -84,15 +84,18 @@ public class DayOffServiceImpl implements IDayOffService {
         List<Map<String, String>> result = new ArrayList<>();
         EmployeeDayOffSummaryVo vo = empSummaryList.get(0);
         result.add(mapResult("姓名", vo.getEmployeeName(), "员工姓名"));
-        result.add(mapResult("毕业日期", vo.getGraduationDate(), "员工毕业日期"));
-        result.add(mapResult("入职日期", vo.getEnrollmentDate(), "员工入职日期"));
-        result.add(mapResult("转正日期", vo.getFormalDate(), "员工转正日期"));
-        result.add(mapResult("离职日期", vo.getLeaveDate(), "员工离职日期"));
-        result.add(mapResult("年假基数", vo.getActualAnnualVacationDays(), "员工年假基数"));
+        result.add(mapResult("毕业日期", vo.getGraduationDate(), "员工毕业日期<br>毕业不满一年无年假<br>毕业满一年但未跨过第一个自然年，年假按比例折算<br>无值视为已毕业满一年"));
+        result.add(mapResult("入职日期", vo.getEnrollmentDate(), "员工入职日期<br>入职不满一年，年假按比例折算<br>如果毕业满一年时间比入职时间晚，则按毕业满一年算起"));
+        result.add(mapResult("转正日期", vo.getFormalDate(), "员工转正日期<br>未转正员工无年假<br>无值视为未转正"));
+        result.add(mapResult("离职日期", vo.getLeaveDate(), "员工离职日期<br>离职员工年假按离职日期前的在职时长折算当年年假<br>无值视为为离职"));
+        result.add(mapResult("年假基数", vo.getActualAnnualVacationDays(), "员工年假基数<br>基数由级别决定或特殊指定"));
 
-        int r = DayOffUtil.thisYearAnnualVacationDays(vo, c.getTime());
-        result.add(mapResult("计算结果", r, "年假计算结果"));
-
+        try {
+            int r = DayOffUtil.thisYearAnnualVacationDays(vo, c.getTime());
+            result.add(mapResult("计算结果", r, "年假计算结果"));
+        } catch (IllegalArgumentException e) {
+            result.add(mapResult("计算结果", e.getMessage(), "年假计算结果"));
+        }
 
         return JsonResult.success("成功", result);
     }
@@ -161,17 +164,22 @@ public class DayOffServiceImpl implements IDayOffService {
             double firstDayOff = firstDayOffMap.getOrDefault(empId, 0d);
             double secondDayOff = secondDayOffMap == null ? 0d :
                     secondDayOffMap.getOrDefault(empId, 0d);
-            DayOffUtil.calcAnnualVacationV2(vo, firstDayOff, secondDayOff, c.getTime(), endOfAnnualVExpire);
-            JSONObject jobj = (JSONObject) JSONObject.toJSON(vo);
-            // 放不同类型的请假数据
-            for (Map.Entry<Integer, Map<String, Double>> dayOffMapE : typeDayOffMap.entrySet()) {
-                int k = dayOffMapE.getKey();
-                String type = "type_" + k;
-                jobj.put(type, dayOffMapE.getValue().getOrDefault(vo.getEmployeeId(), 0d));
+            try {
+                if (DayOffUtil.calcAnnualVacationV2(vo, firstDayOff, secondDayOff, c.getTime(), endOfAnnualVExpire)) {
+                    JSONObject jobj = (JSONObject) JSONObject.toJSON(vo);
+                    // 放不同类型的请假数据
+                    for (Map.Entry<Integer, Map<String, Double>> dayOffMapE : typeDayOffMap.entrySet()) {
+                        int k = dayOffMapE.getKey();
+                        String type = "type_" + k;
+                        jobj.put(type, dayOffMapE.getValue().getOrDefault(vo.getEmployeeId(), 0d));
+                    }
+                    jsonList.add(jobj);
+                }
+            } catch (IllegalArgumentException e) {
+                // 这个异常就吃掉吧
             }
-            jsonList.add(jobj);
         }
-        return JsonResult.success("ok", jsonList);
+        return JsonResult.success("ok", jsonList, jsonList.size());
     }
 
     /**

@@ -10,7 +10,11 @@
 package me.arnu.admin.hammers.service;
 
 import me.arnu.admin.hammers.entity.NatureYearAnnualVacationBalance;
+import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
 import me.arnu.common.common.IBaseService;
+import me.arnu.common.utils.JsonResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -22,4 +26,13 @@ import me.arnu.common.common.IBaseService;
  */
 public interface INatureYearAnnualVacationBalanceService extends IBaseService<NatureYearAnnualVacationBalance> {
 
+    /**
+     * 批量添加年假结余
+     *
+     * @param list      批量列表
+     * @param year      操作的年
+     * @param overwrite 是否覆盖
+     * @return 成功/失败
+     */
+    JsonResult addBatch(List<EmployeeDayOffSummaryVo> list, int year, Boolean overwrite);
 }

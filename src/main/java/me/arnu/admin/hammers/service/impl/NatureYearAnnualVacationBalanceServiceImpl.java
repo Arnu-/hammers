@@ -14,17 +14,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.arnu.admin.hammers.entity.Employee;
 import me.arnu.admin.hammers.mapper.EmployeeMapper;
+import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.system.common.BaseServiceImpl;
-import me.arnu.common.config.CommonConfig;
-import me.arnu.common.utils.CommonUtils;
 import me.arnu.common.utils.JsonResult;
 import me.arnu.common.utils.StringUtils;
-import me.arnu.admin.hammers.constant.NatureYearAnnualVacationBalanceConstant;
 import me.arnu.admin.hammers.entity.NatureYearAnnualVacationBalance;
 import me.arnu.admin.hammers.mapper.NatureYearAnnualVacationBalanceMapper;
 import me.arnu.admin.hammers.query.NatureYearAnnualVacationBalanceQuery;
 import me.arnu.admin.hammers.service.INatureYearAnnualVacationBalanceService;
+import me.arnu.system.entity.Dept;
+import me.arnu.system.entity.Level;
+import me.arnu.system.entity.Position;
 import me.arnu.system.utils.UserUtils;
 import me.arnu.admin.hammers.vo.NatureYearAnnualVacationBalanceListVo;
 import org.springframework.beans.BeanUtils;
@@ -160,4 +161,64 @@ public class NatureYearAnnualVacationBalanceServiceImpl extends BaseServiceImpl<
         return super.delete(entity);
     }
 
+
+    /**
+     * 批量添加，用于导入功能
+     *
+     * @param list      数据
+     * @param year
+     * @param overwrite 是否覆盖
+     * @return 成功或失败
+     */
+    @Override
+    public JsonResult addBatch(List<EmployeeDayOffSummaryVo> list, int year, Boolean overwrite) {
+        List<EmployeeDayOffSummaryVo> result = new ArrayList<>();
+        int successCount = 0;
+        // 数据也不多，一条一条的来吧
+        for (EmployeeDayOffSummaryVo vo : list) {
+            QueryWrapper<NatureYearAnnualVacationBalance> w = new QueryWrapper<NatureYearAnnualVacationBalance>();
+
+            if (vo.getThisYearRemainAnnualVacationDays() <= 0) {
+                vo.setDept("结余天数不可小于等于0");
+                result.add(vo);
+                continue;
+            }
+            // 如果不是覆盖，就需要看看现有的
+            w.eq("employee_id", vo.getEmployeeId());
+            w.eq("year", year);
+
+            NatureYearAnnualVacationBalance b = getOne(w, false);
+            if (b != null) {
+                if (overwrite) {
+                    b.setDays((float) vo.getThisYearRemainAnnualVacationDays());
+                    super.edit(b);
+                    successCount ++;
+                } else {
+                    vo.setDept("数据存在已跳过");
+                    result.add(vo);
+                }
+                continue;
+            }
+            QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("mark", 1);
+            queryWrapper.eq("employee_id", vo.getEmployeeId());
+            Employee e = employeeMapper.selectOne(queryWrapper);
+            if (e == null) {
+                vo.setDept("员工号不存在");
+                result.add(vo);
+                continue;
+            }
+
+            b = new NatureYearAnnualVacationBalance();
+            b.setEmployeeId(vo.getEmployeeId());
+            b.setYear(year);
+            b.setNote("自动计算批量写入");
+            b.setDays((float) vo.getThisYearRemainAnnualVacationDays());
+            super.add(b);
+            successCount++;
+        }
+        return JsonResult.success("成功写入 " + successCount
+                + " 条数据。", result, result.size());
+        // return JsonResult.error("未实现功能");
+    }
 }

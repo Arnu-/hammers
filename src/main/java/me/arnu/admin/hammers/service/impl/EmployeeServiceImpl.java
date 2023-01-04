@@ -69,7 +69,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * 获取数据列表
      *
      * @param query 查询条件
-     * @return
+     * @return 返回员工列表
      */
     @Override
     public JsonResult getList(BaseQuery query) {
@@ -78,8 +78,8 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
         // 手机
         if (!StringUtils.isEmpty(employeeQuery.getMobile())) {
-            queryWrapper.like("real_name", employeeQuery.getMobile());
-            queryWrapper.like("mobile", employeeQuery.getMobile());
+            queryWrapper.like("real_name", employeeQuery.getMobile()).or()
+                    .like("mobile", employeeQuery.getMobile());
         }
         queryWrapper.eq("mark", 1);
         queryWrapper.orderByDesc("id");
@@ -98,18 +98,17 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                 // EmployeeListVo employeeListVo = new EmployeeListVo();
                 // 拷贝属性
                 // BeanUtils.copyProperties(item, employeeListVo);
-                EmployeeListVo employeeListVo = item;
                 // 头像地址
-                if (!StringUtils.isEmpty(employeeListVo.getAvatar())) {
-                    employeeListVo.setAvatarUrl(CommonUtils.getImageURL(employeeListVo.getAvatar()));
+                if (!StringUtils.isEmpty(item.getAvatar())) {
+                    item.setAvatarUrl(CommonUtils.getImageURL(item.getAvatar()));
                 }
                 // 创建人名称
-                if (employeeListVo.getCreateUser() != null && employeeListVo.getCreateUser() > 0) {
-                    employeeListVo.setCreateUserName(UserUtils.getName((employeeListVo.getCreateUser())));
+                if (item.getCreateUser() != null && item.getCreateUser() > 0) {
+                    item.setCreateUserName(UserUtils.getName((item.getCreateUser())));
                 }
                 // 更新人名称
-                if (employeeListVo.getUpdateUser() != null && employeeListVo.getUpdateUser() > 0) {
-                    employeeListVo.setUpdateUserName(UserUtils.getName((employeeListVo.getUpdateUser())));
+                if (item.getUpdateUser() != null && item.getUpdateUser() > 0) {
+                    item.setUpdateUserName(UserUtils.getName((item.getUpdateUser())));
                 }
                 // employeeListVoList.add(employeeListVo);
             });
@@ -121,7 +120,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * 获取记录详情
      *
      * @param id 记录ID
-     * @return
+     * @return 获取员工详情
      */
     @Override
     public Object getInfo(Serializable id) {
@@ -137,7 +136,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * 添加或编辑记录
      *
      * @param entity 实体对象
-     * @return
+     * @return 返回编辑结果
      */
     @Override
     public JsonResult edit(Employee entity) {
@@ -152,7 +151,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * 删除记录
      *
      * @param id 记录ID
-     * @return
+     * @return 返回删除结果
      */
     @Override
     public JsonResult deleteById(Integer id) {
@@ -170,7 +169,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      * 设置状态
      *
      * @param entity 实体对象
-     * @return
+     * @return 返回状态结果
      */
     @Override
     public JsonResult setStatus(Employee entity) {
@@ -194,7 +193,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
      */
     @Override
     public JsonResult addBatch(List<EmployeeListVo> list, boolean autoCreateDept, boolean autoCreateLevel,
-            boolean autoCreatePosition) {
+                               boolean autoCreatePosition) {
         // 1、工号不可重复
         // 2、部门不存在则创建，可选
         // 3、级别不存在则创建，可选
@@ -348,7 +347,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         if (null == entity.getLeaveDate()) {
             uw.set("status", 1);
             uw.set("leave_date", null);
-            employeeMapper.update(null,uw);
+            employeeMapper.update(null, uw);
             return JsonResult.success("修改成功");
         }
         // 1、离职日期不能早于入职日期
@@ -357,7 +356,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         }
         uw.set("status", 2);
         uw.set("leave_date", entity.getLeaveDate());
-        employeeMapper.update(null,uw);
+        employeeMapper.update(null, uw);
         return JsonResult.success("修改成功");
     }
 }

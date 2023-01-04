@@ -29,7 +29,6 @@ import me.arnu.admin.hammers.vo.AskForDayOffLogListVo;
 import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
 import me.arnu.common.common.BaseQuery;
 import me.arnu.common.utils.JsonResult;
-import me.arnu.common.utils.StringUtils;
 import me.arnu.system.common.BaseServiceImpl;
 import me.arnu.system.utils.UserUtils;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +58,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
 
     @Autowired
     private DayOffMapper dayOffMapper;
+/*
 
     private Map<String, String> loadEmpRealName(List<String> empIds) {
         QueryWrapper<Employee> queryWrapper = new QueryWrapper<>();
@@ -84,12 +84,13 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
         }
         return eMap;
     }
+*/
 
     /**
      * 获取数据列表
      *
      * @param query 查询条件
-     * @return
+     * @return 请假列表
      */
     @Override
     public JsonResult getList(BaseQuery query) {
@@ -118,19 +119,18 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
      * 获取记录详情
      *
      * @param id 记录ID
-     * @return
+     * @return 请假记录
      */
     @Override
     public Object getInfo(Serializable id) {
-        AskForDayOffLog entity = (AskForDayOffLog) super.getInfo(id);
-        return entity;
+        return super.getInfo(id);
     }
 
     /**
      * 添加或编辑记录
      *
      * @param entity 实体对象
-     * @return
+     * @return 编辑结果
      */
     @Override
     public JsonResult edit(AskForDayOffLog entity) {
@@ -267,8 +267,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
                         if (!ar.getCode().equals(JsonResult.SUCCESS_CODE)) {
                             return ar;
                         }
-                        JsonResult br = super.edit(bLog);
-                        return br;
+                        return super.edit(bLog);
                     }
                 }
             }
@@ -306,7 +305,6 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
             c.add(Calendar.DATE, -dayoffset);
             dayoffset = Math.toIntExact(tDays / 10);
             c.add(Calendar.DATE, dayoffset);
-            nextStartDate = c.getTime();
         } else {
             if (mod > 0) {
                 endHalfD = AskForDayOffLog.MORNING;
@@ -321,8 +319,8 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
             c.add(Calendar.DATE, -dayoffset);
             dayoffset = Math.toIntExact((tDays + 5) / 10);
             c.add(Calendar.DATE, dayoffset);
-            nextStartDate = c.getTime();
         }
+        nextStartDate = c.getTime();
         AskForDayOffLog newlog = new AskForDayOffLog();
         newlog.setStartDate(nextStartDate)
                 .setStartHalfDay(nextStartHalfD)
@@ -365,7 +363,7 @@ public class AskForDayOffLogServiceImpl extends BaseServiceImpl<AskForDayOffLogM
      * 删除记录
      *
      * @param id 记录ID
-     * @return
+     * @return 返回删除结果
      */
     @Override
     public JsonResult deleteById(Integer id) {

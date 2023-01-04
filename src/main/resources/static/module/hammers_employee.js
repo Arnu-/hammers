@@ -180,6 +180,7 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
                 layer.msg("请至少上传一条数据", { icon: 5 });
                 return false;
             }
+            // 下列代码是用来获取表格工具栏的form内容
             var a = [],
                 o = $(".layui-form-item [name]").serializeArray();
             $.each(o, (function () {

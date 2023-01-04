@@ -8,9 +8,7 @@ create @ 2022/2/12
 */
 package me.arnu.admin.hammers.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.Map;
@@ -50,7 +48,7 @@ public class EmployeeDayOffSummaryVo {
     private int status;
 
     /**
-     * 毕业日期
+     * 毕业日期，用来计算毕业生没年假的
      */
     private Date graduationDate;
 

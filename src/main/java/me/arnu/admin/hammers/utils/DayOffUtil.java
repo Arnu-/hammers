@@ -25,7 +25,7 @@ public class DayOffUtil {
      * @param secondDayOff          下部分请假（即上年结余年假已经失效期间的请假）
      * @param now                   现在日期（即计算假期结余的日期）
      * @param lastAnnualVExpiryDate （开始日期）即上年年假失效日期
-     * 已过期。该方法计算不严谨。
+     *                              已过期。该方法计算不严谨。
      */
     @Deprecated
     public static void calcAnnualVacation(EmployeeDayOffSummaryVo vo, double firstDayOff, double secondDayOff, Date now,
@@ -75,8 +75,7 @@ public class DayOffUtil {
         Calendar c = Calendar.getInstance();
         Calendar e = Calendar.getInstance();
         e.setTime(enrollmentDate);
-        float workYear = c.get(Calendar.YEAR) - e.get(Calendar.YEAR) + (365f - e.get(Calendar.DAY_OF_YEAR)) / 365f;
-        return workYear;
+        return c.get(Calendar.YEAR) - e.get(Calendar.YEAR) + (365f - e.get(Calendar.DAY_OF_YEAR)) / 365f;
     }
 
     /**
@@ -87,16 +86,22 @@ public class DayOffUtil {
      * @param secondDayOff          下部分请假（即上年结余年假已经失效期间的请假）最小单位是0.5
      * @param now                   现在日期（即计算假期结余的日期）最小单位是0.5
      * @param lastAnnualVExpiryDate （开始日期）即上年年假失效日期
+     * @return 有效可以计算就 true，不能计算，返回false
      */
-    public static void calcAnnualVacationV2(EmployeeDayOffSummaryVo vo, double firstDayOff, double secondDayOff, Date now,
-                                            Date lastAnnualVExpiryDate) {
+    public static boolean calcAnnualVacationV2(EmployeeDayOffSummaryVo vo, double firstDayOff, double secondDayOff, Date now,
+                                               Date lastAnnualVExpiryDate) {
         // 5.1 取出对应人的请假状态
         // 5.2 根据请假前、后半年设定来计算
         // 5.3 去年残留还有就先扣去年，去年没有就开始扣今年。
         double lastYearRemain = vo.getLastYearAnnualVacationBalance();
-
-        double thisYearRemain = thisYearAnnualVacationDays(vo, now);
-        vo.setActualAnnualVacationDays(thisYearRemain);
+        double thisYearRemain = 0;
+        try {
+            thisYearRemain = thisYearAnnualVacationDays(vo, now);
+            vo.setActualAnnualVacationDays(thisYearRemain);
+        } catch (IllegalArgumentException e) {
+            // 这个异常也是吃掉的.
+            return false;
+        }
         if (lastYearRemain >= firstDayOff) {
             lastYearRemain = lastYearRemain - firstDayOff;
             thisYearRemain = thisYearRemain - secondDayOff;
@@ -118,6 +123,7 @@ public class DayOffUtil {
                     + vo.getLastYearAnnualVacationBalance());
         }
         vo.setAnnualVacationDayOffDays(firstDayOff + secondDayOff);
+        return true;
     }
 
     /**
@@ -196,23 +202,12 @@ public class DayOffUtil {
             ds = cs.getTime();
         }
         if (de.before(ds)) {
-            throw new RuntimeException("计算年假出错，起算时间晚于结算时间。" + vo.getEmployeeId() + ":" + vo.getEmployeeName());
+            throw new IllegalArgumentException("计算年假出错，起算时间晚于结算时间。" + vo.getEmployeeId() + ":" + vo.getEmployeeName());
         }
-        /*if (isWholeYear(cs, ce)) {
-            return (int) vo.getActualAnnualVacationDays();
-        }*/
+
         // 计算有效在职时间比例 因为天是从1开始的，所以减了还要加1
         double r = (double) (ce.get(Calendar.DAY_OF_YEAR) - cs.get(Calendar.DAY_OF_YEAR) + 1) / wholeYearDays;
 
         return (int) Math.round(r * vo.getActualAnnualVacationDays());
     }
-
-    // 好像用不到了。
-    /*private static boolean isWholeYear(Calendar cs, Calendar ce) {
-        return cs.get(Calendar.YEAR) == ce.get(Calendar.YEAR)
-                && cs.get(Calendar.MONTH) == Calendar.JANUARY
-                && cs.get(Calendar.DATE) == 1
-                && ce.get(Calendar.MONTH) == Calendar.DECEMBER
-                && ce.get(Calendar.DATE) == 31;
-    }*/
 }

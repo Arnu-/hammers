@@ -10,16 +10,14 @@
 package me.arnu.admin.hammers.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import me.arnu.common.common.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import me.arnu.common.common.BaseEntity;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 
 /**
@@ -112,6 +110,11 @@ public class Employee extends BaseEntity {
      * 地址
      */
     private String address;
+
+    /**
+     * 学历
+     */
+    private String education;
 
     /**
      * 毕业日期

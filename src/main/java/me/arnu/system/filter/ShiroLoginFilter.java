@@ -41,8 +41,7 @@ public class ShiroLoginFilter extends FormAuthenticationFilter {
         httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json");
-        JsonResult jsonResult = new JsonResult();
-        httpServletResponse.getWriter().write(JSONObject.toJSON(jsonResult.error(HttpStatus.UNAUTHORIZED, "请先登录")).toString());
+        httpServletResponse.getWriter().write(JSONObject.toJSON(JsonResult.error(HttpStatus.UNAUTHORIZED, "请先登录")).toString());
         return false;
 //        return true;
     }

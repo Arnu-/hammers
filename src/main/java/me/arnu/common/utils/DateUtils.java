@@ -14,6 +14,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -179,4 +180,53 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return day + "天" + hour + "小时" + min + "分钟";
     }
 
+    /**
+     * 计算两日日期相差多少天
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
+    public static int differentDays(Date date1, Date date2) {
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(date1);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(date2);
+
+        return differentDays(calendar1, calendar2);
+    }
+
+    /**
+     * 计算两日日期相差多少天
+     *
+     * @param calendar1
+     * @param calendar2
+     * @return
+     */
+    public static int differentDays(Calendar calendar1, Calendar calendar2) {
+        if (calendar1.after(calendar2)) {
+            Calendar c = calendar1;
+            calendar1 = calendar2;
+            calendar2 = c;
+        }
+        int day1 = calendar1.get(Calendar.DAY_OF_YEAR);
+        int day2 = calendar2.get(Calendar.DAY_OF_YEAR);
+        int year1 = calendar1.get(Calendar.YEAR);
+        int year2 = calendar2.get(Calendar.YEAR);
+
+        if (year1 != year2)  //不同年
+        {
+            int timeDistance = 0;
+            for (int i = year1; i < year2; i++) { //闰年
+                if (i % 4 == 0 && i % 100 != 0 || i % 400 == 0) {
+                    timeDistance += 366;
+                } else { // 不是闰年
+                    timeDistance += 365;
+                }
+            }
+            return timeDistance + (day2 - day1);
+        } else {// 同年
+            return day2 - day1;
+        }
+    }
 }

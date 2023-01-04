@@ -82,6 +82,20 @@
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-inline">
+				<label class="layui-form-label">学历</label>
+				<div class="layui-input-inline">
+					<input name="education" th:value="${info['education']}" autocomplete="off" placeholder="请输入学历" class="layui-input" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">毕业日期</label>
+				<div class="layui-input-inline">
+					<widget:dateSelect name="graduationDate|毕业日期|date" th:value="${info['graduationDate']}"/>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
 				<label class="layui-form-label">昵称</label>
 				<div class="layui-input-inline">
 					<input name="nickname" th:value="${info['nickname']}" autocomplete="off" placeholder="请输入昵称" class="layui-input" type="text">
@@ -113,12 +127,6 @@
 				<label class="layui-form-label">所属城市</label>
 				<div class="layui-input-inline">
 					<widget:citySingleSelect th:value="${info['districtId']} ?: 0" limit="3"/>
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">入职日期</label>
-				<div class="layui-input-inline">
-					<widget:dateSelect name="graduationDate|毕业日期|date|0" th:value="${info['graduationDate']}"/>
 				</div>
 			</div>
 		</div>

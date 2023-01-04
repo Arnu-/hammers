@@ -93,7 +93,8 @@
     </resultMap>
     <select id="selectEmpAnnualVacationInfo" parameterType="me.arnu.admin.hammers.query.DayOffTypeQuery"
             resultMap="SummaryInfoVo">
-        select ue.id, ue.employee_id, ue.realname,sd.name as dept
+        select ue.id, ue.employee_id, ue.realname
+        , sd.name as dept
         , sl.name as `level`
         , ue.graduation_date
         , ue.enrollment_date

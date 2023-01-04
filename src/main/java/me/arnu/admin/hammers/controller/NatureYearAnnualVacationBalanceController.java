@@ -10,6 +10,8 @@
 package me.arnu.admin.hammers.controller;
 
 
+import me.arnu.admin.hammers.vo.EmployeeDayOffSummaryVo;
+import me.arnu.admin.hammers.vo.EmployeeListVo;
 import me.arnu.common.utils.JsonResult;
 import me.arnu.common.annotation.Log;
 import me.arnu.common.enums.BusinessType;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import me.arnu.common.common.BaseController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -113,7 +116,18 @@ public class NatureYearAnnualVacationBalanceController extends BaseController {
     public JsonResult delete(@PathVariable("id") Integer id) {
         return natureYearAnnualVacationBalanceService.deleteById(id);
     }
-	
+
+    /**
+     * 打开自动计算年假结余界面
+     *
+     * @return
+     */
+    @GetMapping("/autoBalanceCalc")
+    public String autoBalanceCalc() {
+        return this.render();
+    }
+
+
 	/**
      * 批量删除
      *
@@ -128,4 +142,19 @@ public class NatureYearAnnualVacationBalanceController extends BaseController {
         return natureYearAnnualVacationBalanceService.deleteByIds(ids);
     }
 
+    /**
+     * 批量生成年假结余
+     * @param list 数据
+     * @param overwrite
+     * @return
+     */
+    @RequiresPermissions("sys:natureyearannualvacationbalance:add")
+    @Log(title = "自然年结余天数", businessType = BusinessType.INSERT)
+    @ResponseBody
+    @PostMapping("/addBatch")
+    public JsonResult addBatch(@RequestBody List<EmployeeDayOffSummaryVo> list,int year,  Boolean overwrite) {
+        overwrite = overwrite != null && overwrite;
+        // return JsonResult.success();
+        return natureYearAnnualVacationBalanceService.addBatch(list,year, overwrite);
+    }
 }
