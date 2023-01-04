@@ -116,6 +116,26 @@ layui.use(['func', 'form', 'table', 'layer'], function () {
             })
             return false;
         })
+        // 表格工具栏的操作
+        table.on('tool(tableList)', function(obj){ // 注：test 是 table 原始标签的属性 lay-filter="对应的值"
+          var data = obj.data; //获得当前行数据
+          var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+          var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+          if(layEvent === 'del'){ //删除
+            layer.confirm('确定删除吗？', function(index){
+              obj.del(); // 删除对应行（tr）的 DOM 结构，并更新缓存
+              layer.close(index);
+
+              // 向服务端发送删除请求，执行完毕后，可通过 reloadData 方法完成数据重载
+              /*
+              table.reloadData(id, {
+                scrollPos: 'fixed'  // 保持滚动条位置不变 - v2.7.3 新增
+              });
+              */
+            });
+          }
+        });
         // 确定按钮事件
         $(".btnConfirm").click(function () {
             var result = table.cache["tableList"];
