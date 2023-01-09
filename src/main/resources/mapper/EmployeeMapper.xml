@@ -21,6 +21,8 @@
             ,scc.name as cityName
             ,scd.name as district
             ,ue.address
+            ,ue.education
+            ,ue.graduation_date
             ,ue.enrollment_date
             ,ue.formal_date
             ,ue.leave_date

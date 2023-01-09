@@ -26,6 +26,7 @@ layui.use(['func', 'table', 'upload', 'laydate', 'admin', 'form'], function () {
             , { field: 'level', width: 80, title: '级别', align: 'center' }
             , { field: 'position', width: 100, title: '职位', align: 'center' }
             , { field: 'workYear', width: 100, title: '工龄', align: 'center' }
+            , { field: 'education', width: 100, title: '学历', align: 'center' }
             , { field: 'graduationDate', width: 120, title: '毕业日期', align: 'center' }
             , { field: 'enrollmentDate', width: 120, title: '入职日期', align: 'center' }
             , { field: 'formalDate', width: 120, title: '转正日期', align: 'center' }

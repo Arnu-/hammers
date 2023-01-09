@@ -144,6 +144,19 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         if (entity.getAvatar().contains(CommonConfig.imageURL)) {
             entity.setAvatar(entity.getAvatar().replaceAll(CommonConfig.imageURL, ""));
         }
+        // 没有在这里验证员工号唯一性
+        QueryWrapper<Employee> w = new QueryWrapper<>();
+        w.eq("employee_id", entity.getEmployeeId());
+        Employee e = getOne(w, false);
+        if (e != null) {
+            if (entity.getId() != null && entity.getId() > 0) {
+                if (!e.getId().equals(entity.getId())) {
+                    return JsonResult.error("员工号重复");
+                }
+            } else {
+                return JsonResult.error("员工号重复");
+            }
+        }
         return super.edit(entity);
     }
 
