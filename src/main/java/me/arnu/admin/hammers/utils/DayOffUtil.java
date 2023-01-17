@@ -208,6 +208,6 @@ public class DayOffUtil {
         // 计算有效在职时间比例 因为天是从1开始的，所以减了还要加1
         double r = (double) (ce.get(Calendar.DAY_OF_YEAR) - cs.get(Calendar.DAY_OF_YEAR) + 1) / wholeYearDays;
 
-        return (int) Math.round(r * vo.getActualAnnualVacationDays());
+        return (int) Math.floor(r * vo.getActualAnnualVacationDays());
     }
 }
