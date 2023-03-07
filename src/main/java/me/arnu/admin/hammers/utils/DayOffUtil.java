@@ -113,15 +113,8 @@ public class DayOffUtil {
         vo.setThisYearRemainAnnualVacationDays(thisYearRemain);
         vo.setFirstAnnualVacationDayOffDays(firstDayOff);
         vo.setSecondAnnualVacationDayOffDays(secondDayOff);
-        // 用于处理显示上年有效年假剩余的数字，过期了就统统显示为0
-        if (now.getTime() >= lastAnnualVExpiryDate.getTime()) {
-            vo.setLastYearRemainAnnualVacationDays(0d);
-            vo.setAllAnnualVacationDays(vo.getActualAnnualVacationDays());
-        } else {
-            vo.setLastYearRemainAnnualVacationDays(lastYearRemain);
-            vo.setAllAnnualVacationDays(vo.getActualAnnualVacationDays()
-                    + vo.getLastYearAnnualVacationBalance());
-        }
+        vo.setAllAnnualVacationDays(vo.getActualAnnualVacationDays()
+                + vo.getLastYearAnnualVacationBalance());
         vo.setAnnualVacationDayOffDays(firstDayOff + secondDayOff);
         return true;
     }

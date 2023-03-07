@@ -12,6 +12,7 @@
         ,al.end_date
         ,al.end_half_day
         ,al.days
+        ,al.note
         ,al.create_user
         ,al.create_time
         ,al.update_user

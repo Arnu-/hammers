@@ -269,7 +269,7 @@ public class DayOffServiceImpl implements IDayOffService {
         // fields.add(new LayuiTableColumnVo("workYear", 100, "工龄", "center", ""));
         fields.add(new LayuiTableColumnVo("lastYearAnnualVacationBalance", 100, "去年结余年假", "center", ""));
         fields.add(new LayuiTableColumnVo("actualAnnualVacationDays", 100, "今年年假额度", "center", ""));
-        fields.add(new LayuiTableColumnVo("lastYearRemainAnnualVacationDays", 100, "去年可用年假剩余", "center", ""));
+        fields.add(new LayuiTableColumnVo("lastYearRemainAnnualVacationDays", 120, "去年可用年假\n(3/31前有效)", "center", ""));
         fields.add(new LayuiTableColumnVo("thisYearRemainAnnualVacationDays", 100, "今年可用年假剩余", "center", ""));
         fields.add(new LayuiTableColumnVo("firstAnnualVacationDayOffDays", 100, "3月31日前请的年假", "center", ""));
         fields.add(new LayuiTableColumnVo("secondAnnualVacationDayOffDays", 100, "3月31日后请的年假", "center", ""));

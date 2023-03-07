@@ -10,8 +10,10 @@
 package me.arnu.admin.hammers.controller;
 
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import me.arnu.admin.hammers.entity.AskForDayOffLog;
 import me.arnu.admin.hammers.query.AskForDayOffLogQuery;
+import me.arnu.admin.hammers.query.DayOffTypeQuery;
 import me.arnu.admin.hammers.service.IAskForDayOffLogService;
 import me.arnu.admin.hammers.vo.AskForDayOffLogListVo;
 import me.arnu.common.annotation.Log;
@@ -101,6 +103,7 @@ public class AskForDayOffLogController extends BaseController {
         Map<String, Object> info = new HashMap<>();
         if (id != null && id > 0) {
             info = askForDayOffLogService.info(id);
+            info.put("autoAnnual",2);
         }
         model.addAttribute("info", info);
         return super.edit(id, model);
@@ -234,6 +237,8 @@ public class AskForDayOffLogController extends BaseController {
     /**
      * 批量添加，用于导入功能
      * @param list 数据
+     * @param autoCreateType 自动创建请假类型
+     * @param autoAnnualToOther 自动把不够的年假转事假
      * @return 成功或失败
      */
     @RequiresPermissions("sys:askfordayofflog:add")
@@ -241,10 +246,17 @@ public class AskForDayOffLogController extends BaseController {
     @ResponseBody
     @PostMapping("/addBatch")
     public JsonResult addBatch(@RequestBody List<AskForDayOffLogListVo> list
-            , Boolean autoCreateType) {
+            , Boolean autoCreateType, Boolean autoAnnualToOther) {
         autoCreateType = autoCreateType != null && autoCreateType;
         return askForDayOffLogService.addBatch(list
-                , autoCreateType);
+                , autoCreateType,autoAnnualToOther);
     }
 
+
+    @ResponseBody
+    @PostMapping("/remainAnnual")
+    public JsonResult remainAnnual(@RequestBody DayOffTypeQuery query) {
+        String r = askForDayOffLogService.getAllBalance(query);
+        return JsonResult.success(r);
+    }
 }

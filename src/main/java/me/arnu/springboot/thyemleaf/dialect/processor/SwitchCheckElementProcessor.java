@@ -48,24 +48,13 @@ public class SwitchCheckElementProcessor extends AbstractElementTagProcessor {
     @Override
     protected void doProcess(ITemplateContext iTemplateContext, IProcessableElementTag iProcessableElementTag, IElementTagStructureHandler iElementTagStructureHandler) {
         // data="显示|不显示"
-        String result = "<input name=\"#ELE_NAME#\" id=\"#ELE_ID#\" th:value=\"#VALUE#\" lay-skin=\"switch\" " +
-                "lay-filter=\"status\" lay-text=\"#TEXT#\" type=\"checkbox\" " +
-                "checked=\"\">" +
-                "<script th:inline=\"javascript\" type=\"text/javascript\">layui.use(['form'], function(){\n" +
-                "\tvar form = layui.form,\n" +
-                "\t\t$ = layui.$;\n" +
-                "\n" +
-                "    if (1 == 1) {\n" +
-                "        $(\"##ELE_ID#\").attr('type', 'hidden').val(1);\n" +
-                "    } else {\n" +
-                "        $(\"##ELE_ID#\").attr('type', 'hidden').val(2);\n" +
-                "    }\n" +
-                "\tform.on('switch(#ELE_ID#)', function(data) {\n" +
-                "\t\tconsole.log('switch开关选择状态：'+this.checked);\n" +
-                "\t    $(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);\n" +
-                "\t});\n" +
-                "});</script>";
-
+        String result = "<input name=\"#ELE_NAME#\"id=\"#ELE_ID#\"value=\"#VALUE#\"lay-skin=\"switch\"" +
+                "lay-filter=\"#ELE_NAME#\"lay-text=\"#TEXT#\"type=\"checkbox\"#CHECKED#>" +
+                "<script th:inline=\"javascript\"type=\"text/javascript\">" +
+                "layui.use(['form'],function(){var form=layui.form,$=layui.$;" +
+                "$(\"##ELE_ID#\").attr('type','hidden').val(#VALUE#);" +
+                "form.on('switch(#ELE_ID#)',function(data){" +
+                "$(data.elem).attr('type','hidden').val(this.checked?1:2)})});</script>";
 
 //        //select的name属性
         String name = iProcessableElementTag.getAttributeValue("name");
@@ -75,6 +64,11 @@ public class SwitchCheckElementProcessor extends AbstractElementTagProcessor {
                 .replaceAll("#ELE_ID#", name)
                 .replaceAll("#TEXT#", data)
                 .replaceAll("#VALUE#", value);
+        if(value.equals("1")){
+            result = result.replaceAll("#CHECKED#", "checked=\"\"");
+        }else{
+            result = result.replaceAll("#CHECKED#", "");
+        }
 //        StringBuffer result = new StringBuffer("<select><option value=''>--请选择--</option></select>");
 //        if(validParamIsNotNull(id,name,colText, colVal, tableName)) {
 //            //最终拼接的sql语句，这里可以使用jdbc来查询

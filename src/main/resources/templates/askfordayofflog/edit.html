@@ -1,12 +1,16 @@
 <html layout:decorator="public/form" xmlns:miguo="http://www.w3.org/1999/html">
 <div layout:fragment="content">
-	<form class="layui-form model-form" action="" style="width:80%;">
+	<form class="layui-form model-form" layui-filter="askfordayoff" action="">
 		<input name="id" type="hidden" th:value="${info['id']}?:0">
 		<div class="layui-form-item">
 			<div class="layui-inline">
 				<label class="layui-form-label layui-form-required">员工号：</label>
 				<div class="layui-input-inline">
-					<input name="employeeId" th:value="${info['employeeId']}" lay-verify="required" autocomplete="off" placeholder="请输入员工号" class="layui-input" type="text">
+					<input id="employeeId" name="employeeId" th:value="${info['employeeId']}" lay-verify="required" autocomplete="off" placeholder="请输入员工号" class="layui-input" type="text">
+				</div>
+				<a id="annual" href="javascript:void(0);" class="layui-btn" lay-filter="annual-calc" >剩余年假</a>
+				<div class="layui-input-inline">
+					<input id="remainAnnual" name="remainAnnual" autocomplete="off" placeholder="年假剩余" class="layui-input" type="text" readonly >
 				</div>
 			</div>
 			<div class="layui-inline">
@@ -14,6 +18,9 @@
 				<div class="layui-input-inline">
 					<widget:singleSelect name="dayOffTypeId|1|请假类型|name|id" sql="SELECT id,`name` FROM ums_day_off_type WHERE mark=1;" th:value="${info['dayOffTypeId']}?:0"/>
 				</div>
+				<label class="layui-form-label layui-form-required">自动转事假：</label>
+				<div class="layui-input-inline"><widget:switchCheck name="autoAnnual" data="自动|禁止" th:value="${info['autoAnnual']?:1}"/>
+					</div>
 			</div>
 		</div>
 		<div class="layui-form-item">

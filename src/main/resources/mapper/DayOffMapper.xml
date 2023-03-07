@@ -125,6 +125,7 @@
         <if test="empId != null and empId != ''">
             AND lower(ue.employee_id) like lower(concat('%', #{empId}, '%'))
         </if>
+        ORDER BY ue.employee_id
     </select>
     <resultMap id="AskForDayOff" type="me.arnu.admin.hammers.entity.AskForDayOffLog">
         <id property="id" column="id"/>

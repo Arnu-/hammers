@@ -3,12 +3,13 @@
  * @auth Arnu
  * @date 2022-02-12
  */
-layui.use(['func','table','upload'], function () {
+layui.use(['func','table','upload','form'], function () {
 
     //声明变量
     var func = layui.func
         , table = layui.table
         , upload = layui.upload
+        , form = layui.form
         , $ = layui.$;
 
     if (A == 'index') {
@@ -139,5 +140,25 @@ layui.use(['func','table','upload'], function () {
                      // parent.location.reload();
                  }, "处理中。。。");
              });
+         }else if(A == "edit"){
+             $("#annual").click(function(r){
+                 var employeeId = $("#employeeId").val();
+                 if(employeeId && employeeId.length > 0){
+                 var url = "remainAnnual";
+                 let d = new Date();
+                 let year = d.getYear() + 1900;
+                 var p = {
+                     page:1,
+                     limit:20,
+                     name:employeeId,
+                     year:year,
+                     empId:employeeId
+                 }
+                     func.ajaxPost(url, p, function (res, success) {
+                 $("#remainAnnual").val(res.msg);
+                                          console.log(res.msg);
+                                      }, "处理中。。。");
+                                  }
+             })
          }
 });

@@ -50,6 +50,12 @@ public class AskForDayOffLog extends BaseEntity {
     public static final String AFTERNOON = "下午";
 
     /**
+     * 自动替换年假
+     */
+    @TableField(exist = false)
+    private int autoAnnual;
+
+    /**
      * 员工
      */
     private String employeeId;

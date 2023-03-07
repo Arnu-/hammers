@@ -60,6 +60,13 @@ public class DayOffController extends BaseController {
         return dayOffService.annualDetail(query);
     }
 
+    @ResponseBody
+    @PostMapping("/annualDetailJ")
+    public JsonResult annualDetailJ(@RequestBody DayOffTypeQuery query) {
+        return dayOffService.annualDetail(query);
+    }
+
+
     /**
      * 打开显示年假计算页面
      *
