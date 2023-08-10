@@ -10,6 +10,7 @@
 package me.arnu.common.config;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +27,11 @@ public class CommonConfig {
      * 是否演示环境：true是,false否
      */
     public static boolean appDebug;
+
+    /**
+     * 激活的系统状态
+     */
+    public static String springProfilesActive;
 
     /**
      * 图片域名赋值
@@ -45,6 +51,19 @@ public class CommonConfig {
     @Value("${spring.app_debug}")
     public void setAppDebug(boolean debug) {
         appDebug = debug;
+    }
+
+    /**
+     * 获取激活信息
+     *
+     * @param active
+     */
+    @Value("${spring.profiles.active}")
+    public void setSpringProfilesActive(String active) {
+        if (StringUtils.isEmpty(active)) {
+            throw new NullPointerException("active profiles can not be null!");
+        }
+        springProfilesActive = active;
     }
 
 }

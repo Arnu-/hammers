@@ -9,6 +9,7 @@
 
 package me.arnu.system.service.impl;
 
+import me.arnu.common.config.CommonConfig;
 import me.arnu.common.enums.Constants;
 import me.arnu.common.exception.user.CaptchaException;
 import me.arnu.common.exception.user.UserNotExistsException;
@@ -89,15 +90,18 @@ public class LoginServiceImpl implements ILoginService {
      */
     @Override
     public JsonResult login(HttpServletRequest request, LoginDto loginDto) {
-        // 验证码
-        if (!loginDto.getCaptcha().equals("520")) {
-            // 验证验证码是否为空
-            if (StringUtils.isEmpty(loginDto.getCaptcha())) {
+        // 获取验证码
+        String captcha = loginDto.getCaptcha();
+        String profile = CommonConfig.springProfilesActive;
+        if(profile.equals("pro")||!"520".equals(captcha)){
+            if (StringUtils.isEmpty(captcha)) {
+                // 验证码错误就不记录日志了。AsyncManager.me().execute(AsyncFactory.recordLogininfor(captcha, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
+                // throw new CaptchaException();
                 return JsonResult.error("验证码不能为空");
             }
-            // 验证码校验
-            if (!CaptchaUtil.ver(loginDto.getCaptcha(), request)) {
-                CaptchaUtil.clear(request);  // 清除session中的验证码
+            if (!CaptchaUtil.ver(captcha, ServletUtils.getRequest())) {
+                // 验证码校验
+                CaptchaUtil.clear(ServletUtils.getRequest());  // 清除session中的验证码
                 return JsonResult.error("验证码不正确");
             }
         }
@@ -153,23 +157,10 @@ public class LoginServiceImpl implements ILoginService {
      */
     @Override
     public User login(String username, String password) {
-        // 用户名和验证码校验
+        // 用户名
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("not.null")));
             throw new UserNotExistsException();
-        }
-        // 获取验证码
-        String captcha = ServletUtils.getRequest().getSession().getAttribute("captcha").toString();
-        if (StringUtils.isEmpty(captcha)) {
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
-            throw new CaptchaException();
-        }
-        // 验证码校验
-        if (!captcha.equals("520") && !CaptchaUtil.ver(captcha, ServletUtils.getRequest())) {
-            // 验证码校验
-            CaptchaUtil.clear(ServletUtils.getRequest());  // 清除session中的验证码
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(captcha, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
-            throw new CaptchaException();
         }
 
         // 查询用户信息

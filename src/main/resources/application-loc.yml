@@ -186,7 +186,15 @@ spring:
         mode: channel
 #         多个连接,多个channel
 #        mode: connection
-
+  login:
+    # 默认放在用户名框
+    defaultUser: admin
+    # 默认放在密码框的值
+    defaultPwd: 123456
+    # 默认放在验证码框
+    defaultCaptcha: 520
+    # 默认是否勾选记住我
+    defaultRemember: true
 file:
   #上传的服务器上的映射文件夹
   accessPath: /uploads/

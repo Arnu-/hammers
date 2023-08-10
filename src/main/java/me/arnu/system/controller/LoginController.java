@@ -12,6 +12,7 @@ package me.arnu.system.controller;
 import me.arnu.common.config.SystemConfig;
 import me.arnu.common.utils.JsonResult;
 import me.arnu.common.utils.RedisUtils;
+import me.arnu.system.config.LoginConfig;
 import me.arnu.system.dto.LoginDto;
 import me.arnu.system.service.ILoginService;
 import com.wf.captcha.utils.CaptchaUtil;
@@ -40,6 +41,9 @@ public class LoginController {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private LoginConfig loginConfig;
+
     /**
      * 登录首页
      *
@@ -48,6 +52,12 @@ public class LoginController {
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("fullName", SystemConfig.fullName);
+        model.addAttribute("defaultUser", loginConfig.getDefaultUser());
+        model.addAttribute("defaultPwd", loginConfig.getDefaultPwd());
+        model.addAttribute("defaultCaptcha",
+                loginConfig.getDefaultCaptcha());
+        model.addAttribute("defaultRemember",
+                loginConfig.getDefaultRemember());
         return "login";
     }
 

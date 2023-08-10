@@ -162,17 +162,17 @@
         <h2 th:text="${fullName}"></h2>
         <div class="layui-form-item layui-input-icon-group">
             <i class="layui-icon layui-icon-username"></i>
-            <input class="layui-input" id="username" name="username" value="admin" placeholder="请输入登录账号" autocomplete="off"
+            <input class="layui-input" id="username" name="username" th:value="${defaultUser}" placeholder="请输入登录账号" autocomplete="off"
                    lay-verType="tips" lay-verify="required" required/>
         </div>
         <div class="layui-form-item layui-input-icon-group">
             <i class="layui-icon layui-icon-password"></i>
-            <input class="layui-input" id="password" name="password" value="123456" placeholder="请输入登录密码" type="password"
+            <input class="layui-input" id="password" name="password" th:value="${defaultPwd}" placeholder="请输入登录密码" type="password"
                    lay-verType="tips" lay-verify="required" required/>
         </div>
         <div class="layui-form-item layui-input-icon-group login-captcha-group">
             <i class="layui-icon layui-icon-auz"></i>
-            <input class="layui-input" id="captcha" name="captcha" value="520" placeholder="请输入验证码" autocomplete="off"
+            <input class="layui-input" id="captcha" name="captcha" th:value="${defaultCaptcha}" placeholder="请输入验证码" autocomplete="off"
                    lay-verType="tips" lay-verify="required" required/>
             <img src="/captcha" width="130px" height="48px" class="login-captcha" alt="点击刷新验证码"/>
         </div>
